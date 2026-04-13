@@ -629,6 +629,7 @@ static void HandleGummiItemAction(Entity *pokemon, Entity *target, u8 gummiIndex
   targetInfo = GetEntInfo(target);
   gummiBoost = gTypeGummiIQBoost[targetInfo->types[0]][gummiIndex];
   gummiBoost += gTypeGummiIQBoost[targetInfo->types[1]][gummiIndex];
+  gummiBoost *= 10;
   sub_8078B5C(pokemon,target,
              gUnknown_810A808[targetInfo->types[0]][gummiIndex] +
              gUnknown_810A808[targetInfo->types[1]][gummiIndex],0,1);
