@@ -29,13 +29,13 @@ typedef struct ExclusivePokemonData
 {                               \
     .poke_id = species,         \
     .in_rrt = TRUE,             \
-    .in_brt = FALSE,            \
+    .in_brt = TRUE,             \
 }
 
 #define BLUE_EXCLUSIVE(species) \
 {                               \
     .poke_id = species,         \
-    .in_rrt = FALSE,            \
+    .in_rrt = TRUE,             \
     .in_brt = TRUE,             \
 }
 
