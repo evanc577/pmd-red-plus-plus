@@ -1,12 +1,14 @@
 #ifndef GUARD_SAVE_H
 #define GUARD_SAVE_H
 
-#include "game_options.h"
-#include "play_time.h"
 #include "exclusive_pokemon.h"
-#include "rescue_team_info.h"
-#include "pokemon.h"
+#include "game_options.h"
 #include "items.h"
+#include "play_time.h"
+#include "pokemon.h"
+#include "rescue_team_info.h"
+#include "romhack_data.h"
+#include "romhack_save.h"
 #include "code_8094F88.h"
 #include "code_80958E8.h"
 
@@ -46,6 +48,7 @@ struct UnkStruct_sub_8011DAC
     u32 unk440;
     u32 savedMailInfo;
     u8 unk448[0x538C];
+    u8 savedRomhackData[sizeof(RomhackData)];
 };
 
 // size: 0x5C

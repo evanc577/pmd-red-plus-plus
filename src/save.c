@@ -35,6 +35,7 @@ EWRAM_DATA s32 gUnknown_202DE28 = {0};
 
 EWRAM_INIT u32 gUnknown_203B17C = {0};
 EWRAM_INIT const char *gUnknown_203B180 = {"POKE_DUNGEON__05"};
+EWRAM_INIT const char *gRomhackName =     {"ROM_________HACK"};
 EWRAM_INIT UnkStruct_203B184 *gUnknown_203B184 = { NULL };
 
 ALIGNED(4) static const char fill_save0[] = _("pksdir0");
@@ -255,6 +256,8 @@ u32 ReadSaveFromPak(u32 *a)
         if (r1 != playerSave->savedMailInfo) {
             saveStatus = 3;
         }
+
+        MemoryCopy8(&gRomhackData, playerSave->savedRomhackData, sizeof(RomhackData));
     }
     MemoryFree(playerSave);
     return saveStatus;
@@ -309,60 +312,66 @@ bool8 IsSaveCorrupted(void)
 
 u32 WriteSavetoPak(s32 *param_1, u32 param_2)
 {
-  struct UnkStruct_sub_8011DAC *playerSave;
-  const u8 *gameName;
-  s32 saveStatus1;
-  s32 saveStatus2;
-  u8 *array_ptr;
+    struct UnkStruct_sub_8011DAC *playerSave;
+    s32 saveStatus1;
+    s32 saveStatus2;
+    u8 *array_ptr;
 
-  playerSave = MemoryAlloc(sizeof(struct UnkStruct_sub_8011DAC), MEMALLOC_GROUP_5);
-  array_ptr = playerSave->unk448;
-  if (gUnknown_203B184 == NULL) {
-    playerSave->unk41C = param_2;
-    playerSave->unk418 = sub_8011C34();
-    playerSave->RngState = GetRNGState();
-  }
-  else {
-    playerSave->unk41C = gUnknown_203B184->unk054;
-    playerSave->unk418 = gUnknown_203B184->unk050;
-    playerSave->RngState = gUnknown_203B184->RngState;
-  }
-   playerSave->checksum = 0x5071412;
-  gameName = GetGameInternalName();
-  strncpy(playerSave->gameInternalName,gameName, ARRAY_COUNT(playerSave->gameInternalName));
-  if (gUnknown_203B184 == NULL) {
-    SaveGlobalScriptVars(playerSave->unk004);
-  }
-  else {
-    MemoryCopy8(playerSave->unk004,gUnknown_203B184->unk04C,ARRAY_COUNT(playerSave->unk004));
-  }
+    playerSave = MemoryAlloc(sizeof(struct UnkStruct_sub_8011DAC), MEMALLOC_GROUP_5);
+    array_ptr = playerSave->unk448;
+    if (gUnknown_203B184 == NULL) {
+        playerSave->unk41C = param_2;
+        playerSave->unk418 = sub_8011C34();
+        playerSave->RngState = GetRNGState();
+    }
+    else {
+        playerSave->unk41C = gUnknown_203B184->unk054;
+        playerSave->unk418 = gUnknown_203B184->unk050;
+        playerSave->RngState = gUnknown_203B184->RngState;
+    }
+    playerSave->checksum = 0x5071412;
 
-  playerSave->savedRecruitedPokemon = SaveRecruitedPokemon(array_ptr,0x4650);
-  array_ptr += 0x4650;
-  playerSave->unk428 = SavePoke2s(array_ptr, 150 * 4);
-  array_ptr += 150 * 4;
-  playerSave->savedTeamInventory = SaveTeamInventory(array_ptr,0x1D8);
-  array_ptr += 0x1D8;
-  playerSave->savedRescueTeamInfo = SaveRescueTeamInfo(array_ptr,0x10);
-  array_ptr += 0x10;
-  playerSave->savedFriendAreas = SaveFriendAreas(array_ptr,8);
-  array_ptr += 8;
-  playerSave->unk43C = SaveAdventureData(array_ptr, 0x100);
-  array_ptr += 0x100;
-  playerSave->unk440 = sub_8095624(array_ptr,0x594);
-  array_ptr += 0x594;
-  playerSave->savedMailInfo = SaveMailInfo(array_ptr,0x221);
+    // Write a different game name so we know if the save data contains romhack data
+    strncpy(playerSave->gameInternalName, gRomhackName, ARRAY_COUNT(playerSave->gameInternalName));
 
-  saveStatus1 = WriteSaveSector(param_1, (u8 *)playerSave, sizeof(struct UnkStruct_sub_8011DAC));
-  saveStatus2 = WriteSaveSector(param_1, (u8 *)playerSave, sizeof(struct UnkStruct_sub_8011DAC));
-  MemoryFree(playerSave);
+    if (gUnknown_203B184 == NULL) {
+        SaveGlobalScriptVars(playerSave->unk004);
+    }
+    else {
+        MemoryCopy8(playerSave->unk004,gUnknown_203B184->unk04C,ARRAY_COUNT(playerSave->unk004));
+    }
 
-  if (saveStatus1 != SAVE_COMPLETED)
-    return saveStatus1;
-  if (saveStatus2 != SAVE_COMPLETED)
-    return saveStatus2;
+    playerSave->savedRecruitedPokemon = SaveRecruitedPokemon(array_ptr,0x4650);
+    array_ptr += 0x4650;
+    playerSave->unk428 = SavePoke2s(array_ptr, 150 * 4);
+    array_ptr += 150 * 4;
+    playerSave->savedTeamInventory = SaveTeamInventory(array_ptr,0x1D8);
+    array_ptr += 0x1D8;
+    playerSave->savedRescueTeamInfo = SaveRescueTeamInfo(array_ptr,0x10);
+    array_ptr += 0x10;
+    playerSave->savedFriendAreas = SaveFriendAreas(array_ptr,8);
+    array_ptr += 8;
+    playerSave->unk43C = SaveAdventureData(array_ptr, 0x100);
+    array_ptr += 0x100;
+    playerSave->unk440 = sub_8095624(array_ptr,0x594);
+    array_ptr += 0x594;
+    playerSave->savedMailInfo = SaveMailInfo(array_ptr,0x221);
+    array_ptr += 0x221;
 
-  return SAVE_COMPLETED;
+    // Write romhack save data
+    MemoryCopy8(playerSave->savedRomhackData, &gRomhackData, sizeof(gRomhackData));
+    /* SaveRomhackData(array_ptr, RomhackSaveSize()); */
+
+    saveStatus1 = WriteSaveSector(param_1, (u8 *)playerSave, sizeof(struct UnkStruct_sub_8011DAC));
+    saveStatus2 = WriteSaveSector(param_1, (u8 *)playerSave, sizeof(struct UnkStruct_sub_8011DAC));
+    MemoryFree(playerSave);
+
+    if (saveStatus1 != SAVE_COMPLETED)
+        return saveStatus1;
+    if (saveStatus2 != SAVE_COMPLETED)
+        return saveStatus2;
+
+    return SAVE_COMPLETED;
 }
 
 s32 sub_80121D4(s32 *a, u8 *src, s32 size)
