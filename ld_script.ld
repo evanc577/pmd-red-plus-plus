@@ -421,7 +421,6 @@ SECTIONS {
         *libc.a:readr.o(.text);
         *libgcc.a:_udivsi3.o(.text);
         src/romhack_data.o(.text);
-        src/romhack_save.o(.text);
     }  > ROM =0
 
     .rodata :
@@ -907,7 +906,6 @@ SECTIONS {
         *libc.a:mprec.o(.rodata);
         *libc.a:syscalls.o(.rodata);
         src/romhack_data.o(.rodata);
-        src/romhack_save.o(.rodata);
 		. = ALIGN(4);
     } > ROM =0
 
