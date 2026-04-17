@@ -10,7 +10,35 @@
 
 static EWRAM_INIT RomhackDataOptionsMenu *sMenu = {NULL};
 
-#include "data/romhack_options_menu.h"
+ALIGNED(4) static const u8 sRomhackOptions[] = ("Romhack Options");
+ALIGNED(4) static const u8 sStringDebug1[] = ("DEBUG 1");
+
+static const WindowTemplate sDefaultWindowTemplate = {
+    .flags = 0,
+    .type = WINDOW_TYPE_NORMAL,
+    .pos = { 0, 0 },
+    .width = 0, .height = 0,
+    .totalHeight = 0,
+    .unk12 = 0,
+    .header = NULL,
+};
+
+static const WindowHeader sWindowHeader = {
+    .count = 1,
+    .currId = 0,
+    .width = 12,
+    .f3 = 0,
+};
+
+static const WindowTemplate sWindowTemplate = {
+    .flags = 0,
+    .type = WINDOW_TYPE_WITH_HEADER,
+    .pos = { 2, 2 },
+    .width = 24, .height = 6,
+    .totalHeight = 18,
+    .unk12 = 0,
+    .header = &sWindowHeader
+};
 
 static void CreateOptionsMenu(void);
 
@@ -67,9 +95,9 @@ s32 HandleRomhackDataScreenInput(void) {
     /*             flag = TRUE; */
     /*         } */
     /*         break; */
-        default:
-            return 0;
     }
+    MenuCursorUpdate(&sMenu->input, TRUE);
+    return 0;
 }
 
 static void CreateOptionsMenu(void) {
