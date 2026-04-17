@@ -241,13 +241,13 @@ static void sub_802608C(void)
             sUnknown_203B2B8->unk220.id[3] = sUnknown_80DD370;
             PartyListMenu_CreateMenu1();
             sUnknown_203B2B8->unk220.id[2] = sUnknown_80DD328;
-            sub_8012CAC(&sUnknown_203B2B8->unk220.id[2], sUnknown_203B2B8->unk16C);
+            CalculateWindowWidth(&sUnknown_203B2B8->unk220.id[2], sUnknown_203B2B8->unk16C);
             sUnknown_203B2B8->unk220.id[2].width = 9;
             break;
         case 0x14:
             PartyListMenu_CreateMenu2();
             sUnknown_203B2B8->unk220.id[2] = sUnknown_80DD340;
-            sub_8012CAC(&sUnknown_203B2B8->unk220.id[2], sUnknown_203B2B8->unk16C);
+            CalculateWindowWidth(&sUnknown_203B2B8->unk220.id[2], sUnknown_203B2B8->unk16C);
             break;
         default:
             for(index = 0; index < 4; index++)

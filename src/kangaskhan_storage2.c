@@ -118,7 +118,7 @@ static void sub_8017F28(void)
             sUnknown_203B20C->unkF0.id[0] = sUnknown_80DB7B8;
             BuildKangaskhanStorage2MainMenu();
             sUnknown_203B20C->unkF0.id[2] = sUnknown_80DB7D0;
-            sub_8012CAC(&sUnknown_203B20C->unkF0.id[2], sUnknown_203B20C->unk20);
+            CalculateWindowWidth(&sUnknown_203B20C->unkF0.id[2], sUnknown_203B20C->unk20);
             break;
         case 4:
         case 5:

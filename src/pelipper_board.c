@@ -156,12 +156,12 @@ void sub_802E94C(void)
             }
             CreatePelipperBoardMenu();
             gPelipperBoard->unk10C.id[2] = gUnknown_80E0348;
-            sub_8012CAC(&gPelipperBoard->unk10C.id[2], gPelipperBoard->menuItems);
+            CalculateWindowWidth(&gPelipperBoard->unk10C.id[2], gPelipperBoard->menuItems);
             break;
         case 6:
             sub_802EC10();
             gPelipperBoard->unk10C.id[2] = gUnknown_80E0360;
-            sub_8012CAC(&gPelipperBoard->unk10C.id[2], gPelipperBoard->menuItems);
+            CalculateWindowWidth(&gPelipperBoard->unk10C.id[2], gPelipperBoard->menuItems);
             gPelipperBoard->unk10C.id[2].width = 6;
             gPelipperBoard->unk10C.id[3] = gUnknown_80E0378;
             break;

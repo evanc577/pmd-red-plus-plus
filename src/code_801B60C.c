@@ -135,7 +135,7 @@ static void sub_801B760(void)
             RestoreSavedWindows(&sUnknown_203B234->windows);
             sub_801BB5C();
             sUnknown_203B234->windows.id[2] = sUnknown_80DBA70;
-            sub_8012CAC(&sUnknown_203B234->windows.id[2], sUnknown_203B234->unkCC);
+            CalculateWindowWidth(&sUnknown_203B234->windows.id[2], sUnknown_203B234->unkCC);
             ResetUnusedInputStruct();
             ShowWindows(&sUnknown_203B234->windows, TRUE, TRUE);
             break;

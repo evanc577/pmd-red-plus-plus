@@ -207,14 +207,14 @@ static void sub_801FDC0(void)
         case 0x11:
             sub_80205D0();
             gUnknown_203B27C->unk180.id[2] = gUnknown_80DC334;
-            sub_8012CAC(&gUnknown_203B27C->unk180.id[2], gUnknown_203B27C->unk7C);
+            CalculateWindowWidth(&gUnknown_203B27C->unk180.id[2], gUnknown_203B27C->unk7C);
             ResetUnusedInputStruct();
             ShowWindows(&gUnknown_203B27C->unk180, TRUE, TRUE);
             break;
         case 0x17:
             sub_802069C();
             gUnknown_203B27C->unk180.id[2] = gUnknown_80DC334;
-            sub_8012CAC(&gUnknown_203B27C->unk180.id[2], gUnknown_203B27C->unk7C);
+            CalculateWindowWidth(&gUnknown_203B27C->unk180.id[2], gUnknown_203B27C->unk7C);
             ResetUnusedInputStruct();
             ShowWindows(&gUnknown_203B27C->unk180, TRUE, TRUE);
             break;
@@ -222,7 +222,7 @@ static void sub_801FDC0(void)
             CreateGulpinLinkMenu();
             gUnknown_203B27C->unk180.id[1] = gUnknown_80DC31C;
             gUnknown_203B27C->unk180.id[2] = gUnknown_80DC34C;
-            sub_8012CAC(&gUnknown_203B27C->unk180.id[2], gUnknown_203B27C->unk7C);
+            CalculateWindowWidth(&gUnknown_203B27C->unk180.id[2], gUnknown_203B27C->unk7C);
             ResetUnusedInputStruct();
             ShowWindows(&gUnknown_203B27C->unk180, TRUE, TRUE);
             break;

@@ -207,14 +207,14 @@ static void sub_801D220(void)
                     sUnknown_203B250->windows.id[i] = sUnknown_80DBE7C;
 
                 sUnknown_203B250->windows.id[0] = sUnknown_80DBE98;
-                sub_8012CAC(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
+                CalculateWindowWidth(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
                 sUnknown_203B250->windows.id[0].width = 9;
             }
             else {
                 for (i = 0; i < MAX_WINDOWS; i++)
                     sUnknown_203B250->windows.id[i] = sUnknown_80DBEB0[i];
 
-                sub_8012CAC(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
+                CalculateWindowWidth(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
                 sUnknown_203B250->windows.id[0].width = 8;
             }
             break;
@@ -226,14 +226,14 @@ static void sub_801D220(void)
                     sUnknown_203B250->windows.id[i] = sUnknown_80DBE7C;
 
                 sUnknown_203B250->windows.id[0] = sUnknown_80DBE98;
-                sub_8012CAC(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
+                CalculateWindowWidth(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
                 sUnknown_203B250->windows.id[0].width = 9;
             }
             else {
                 for (i = 0; i < MAX_WINDOWS; i++)
                     sUnknown_203B250->windows.id[i] = sUnknown_80DBEB0[i];
 
-                sub_8012CAC(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
+                CalculateWindowWidth(&sUnknown_203B250->windows.id[0], sUnknown_203B250->unk68);
                 sUnknown_203B250->windows.id[0].width = 8;
             }
             break;

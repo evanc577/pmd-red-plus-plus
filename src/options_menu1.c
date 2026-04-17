@@ -132,7 +132,7 @@ static void CreateAllMenus(void)
                 sOptionsMenu1State->window_templates.id[i] = sDefaultWindowTemplate;
 
             sOptionsMenu1State->window_templates.id[0] = sWindowTemplate;
-            sub_8012CAC(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
+            CalculateWindowWidth(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
             break;
         case OPTIONS_MENU_MAIN:
             CreateOthersMenu();
@@ -141,7 +141,7 @@ static void CreateAllMenus(void)
                 sOptionsMenu1State->window_templates.id[i] = sDefaultWindowTemplate;
 
             sOptionsMenu1State->window_templates.id[0] = sWindowTemplate;
-            sub_8012CAC(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
+            CalculateWindowWidth(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
             break;
         default:
             for (i = 0; i < 4; i++)

@@ -192,12 +192,12 @@ static void sub_80310FC(void)
             gUnknown_203B328->unkA8.id[1] = gUnknown_80E09A8;
             gUnknown_203B328->unkA8.id[2] = gUnknown_80E0990;
             gUnknown_203B328->unkA8.id[3] = gUnknown_80E0990;
-            sub_8012CAC(&gUnknown_203B328->unkA8.id[1], gUnknown_80E0968);
+            CalculateWindowWidth(&gUnknown_203B328->unkA8.id[1], gUnknown_80E0968);
             break;
         case DELETE_SINGLE_MAIL_STATE:
         case DELETE_ALL_MAIL_STATE:
             gUnknown_203B328->unkA8.id[2] = gUnknown_80E09C0;
-            sub_8012CAC(&gUnknown_203B328->unkA8.id[2], gUnknown_80E0948);
+            CalculateWindowWidth(&gUnknown_203B328->unkA8.id[2], gUnknown_80E0948);
             break;
         case INFO_STATE:
             gUnknown_203B328->unkA8.id[0] = gUnknown_80E0990;
