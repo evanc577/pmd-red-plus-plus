@@ -145,12 +145,12 @@ void sub_802719C(void)
             sUnknown_203B2BC->unk180.id[3] = sUnknown_80DD74C;
             CreateFriendActionMenu();
             sUnknown_203B2BC->unk180.id[2] = sUnknown_80DD704;
-            CalculateWindowWidth(&sUnknown_203B2BC->unk180.id[2], sUnknown_203B2BC->menuItems);
+            SetCalculatedWindowDims(&sUnknown_203B2BC->unk180.id[2], sUnknown_203B2BC->menuItems);
             break;
         case 0xC:
             sub_80276A8();
             sUnknown_203B2BC->unk180.id[2] = sUnknown_80DD71C;
-            CalculateWindowWidth(&sUnknown_203B2BC->unk180.id[2], sUnknown_203B2BC->menuItems);
+            SetCalculatedWindowDims(&sUnknown_203B2BC->unk180.id[2], sUnknown_203B2BC->menuItems);
             break;
         default:
             for(index = 0; index < 4; index++)

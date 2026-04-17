@@ -2,6 +2,7 @@
 #define GUARD_OPTIONS_MENU1_H
 
 #include "game_options.h"
+#include "romhack_data.h"
 #include "structs/menu.h"
 
 // size: 0x11C
@@ -15,6 +16,7 @@ typedef struct OptionsMenu1State
     /* 0x6C */ MenuItem menuItems[8];
     u16 unkAC[8];
     WindowTemplates window_templates;
+    RomhackData newRomhackData;
 } OptionsMenu1State;
 
 bool8 sub_801DCC4(void);

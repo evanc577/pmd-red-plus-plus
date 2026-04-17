@@ -6,3 +6,6 @@ void initializeRomhackData(RomhackData *data) {
     data->version = 0;
 }
 
+bool8 RomhackDataNotChanged(RomhackData *newData) {
+    return TRUE;
+}

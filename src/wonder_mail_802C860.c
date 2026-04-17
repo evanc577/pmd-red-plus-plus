@@ -88,7 +88,7 @@ static void sub_802C928(void)
         case 2:
             sub_802CAA4();
             sUnknown_203B2F0->unk19C.id[2] = sUnknown_80DFD40;
-            CalculateWindowWidth(&sUnknown_203B2F0->unk19C.id[2], sUnknown_203B2F0->unk10C);
+            SetCalculatedWindowDims(&sUnknown_203B2F0->unk19C.id[2], sUnknown_203B2F0->unk10C);
             break;
         case 3:
             sUnknown_203B2F0->unk19C.id[3] = sUnknown_80DFD58;

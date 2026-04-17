@@ -144,3 +144,4 @@
 .include "src/ground_sprite.o"
 .include "src/ground_link.o"
 .include "src/romhack_data.o"
+.include "src/romhack_options_menu.o"

@@ -10,5 +10,6 @@ typedef struct RomhackData {
 extern RomhackData gRomhackData;
 
 void initializeRomhackData(RomhackData *data);
+bool8 RomhackDataNotChanged(RomhackData *newData);
 
 #endif // GUARD_ROMHACK_DATA_H

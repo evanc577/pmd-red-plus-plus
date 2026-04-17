@@ -60,7 +60,7 @@ bool8 sub_8015080(u8 *buffer, const MenuItem *menuItems)
 
     gUnknown_203B1F8->windows.id[0] = gUnknown_80DAF88;
     gUnknown_203B1F8->windows.id[2] = gUnknown_80DAFA0;
-    CalculateWindowWidth(&gUnknown_203B1F8->windows.id[2], menuItems);
+    SetCalculatedWindowDims(&gUnknown_203B1F8->windows.id[2], menuItems);
     ResetUnusedInputStruct();
     ShowWindows(&gUnknown_203B1F8->windows, 1, 1);
     sub_80073B8(0);

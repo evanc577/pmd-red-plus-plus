@@ -9,6 +9,7 @@
 #include "menu_input.h"
 #include "options_menu1.h"
 #include "options_menu2.h"
+#include "romhack_options_menu.h"
 #include "string_format.h"
 #include "text_1.h"
 
@@ -41,7 +42,6 @@ static EWRAM_INIT OptionsMenu1State *sOptionsMenu1State = {NULL};
 
 static void CreateChangeSettingsConfirmMenu(void);
 static void CreateOthersMenu(void);
-static void CreateRomhackOptionsMenu(void);
 static void HandleChangeSettingsMenu(void);
 static void HandleOthersMenu(void);
 static void SetOptionsMenuState(u32 newState);
@@ -52,6 +52,7 @@ static void GameOptionsMenuTransition(void);
 static void sub_801E088(void);
 static void sub_801E0E0(void);
 static void sub_801E0FC(void);
+static void HandleRomhackScreen(void);
 
 bool8 sub_801DCC4(void)
 {
@@ -76,11 +77,14 @@ u32 sub_801DCE8(void)
         case OPTIONS_MENU_DISPLAY_HINT:
             sub_801E0E0();
             break;
-        case 6:
+        case OPTIONS_MENU_UNKNOWN_6:
             sub_801E0FC();
             break;
         case OPTIONS_MENU_CONFIRM_NEW_OPTIONS:
             HandleChangeSettingsMenu();
+            break;
+        case OPTIONS_MENU_ROMHACK_OPTIONS:
+            HandleRomhackScreen();
             break;
         default:
             break;
@@ -132,7 +136,7 @@ static void CreateAllMenus(void)
                 sOptionsMenu1State->window_templates.id[i] = sDefaultWindowTemplate;
 
             sOptionsMenu1State->window_templates.id[0] = sWindowTemplate;
-            CalculateWindowWidth(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
+            SetCalculatedWindowDims(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
             break;
         case OPTIONS_MENU_MAIN:
             CreateOthersMenu();
@@ -141,7 +145,7 @@ static void CreateAllMenus(void)
                 sOptionsMenu1State->window_templates.id[i] = sDefaultWindowTemplate;
 
             sOptionsMenu1State->window_templates.id[0] = sWindowTemplate;
-            CalculateWindowWidth(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
+            SetCalculatedWindowDims(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
             break;
         default:
             for (i = 0; i < 4; i++)
@@ -180,7 +184,8 @@ static void GameOptionsMenuTransition(void)
             CreateMenuDialogueBoxAndPortrait(sChangeSettingsPrompt, 0, 4, sOptionsMenu1State->menuItems, 0, 4, 0, 0, 32);
             break;
         case OPTIONS_MENU_ROMHACK_OPTIONS:
-            CreateRomhackOptionsMenu();
+            sOptionsMenu1State->newRomhackData = gRomhackData;
+            CreateRomhackOptionsDisplayScreen(&sOptionsMenu1State->newRomhackData);
             break;
     }
 }
@@ -225,12 +230,6 @@ static void CreateChangeSettingsConfirmMenu(void)
     loopMax++;
     sOptionsMenu1State->menuItems[loopMax].text = NULL;
     sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_DEFAULT;
-}
-
-static void CreateRomhackOptionsMenu(void)
-{
-    s32 LoopMax;
-    (void)LoopMax;
 }
 
 static void HandleOthersMenu(void)
@@ -303,6 +302,25 @@ static void sub_801E0FC(void)
 
             // Check to see if the options changed?
             if (GameOptionsNotChange(&sOptionsMenu1State->newOptions))
+                SetOptionsMenuState(OPTIONS_MENU_MAIN);
+            else
+                SetOptionsMenuState(OPTIONS_MENU_CONFIRM_NEW_OPTIONS);
+            break;
+        case 0:
+        case 1:
+            break;
+    }
+}
+
+static void HandleRomhackScreen(void)
+{
+    switch (HandleRomhackDataScreenInput()) {
+        case 2:
+        case 3:
+            DestroyRomhackOptionsDisplayScreen();
+
+            // Check to see if the options changed?
+            if (RomhackDataNotChanged(&sOptionsMenu1State->newRomhackData))
                 SetOptionsMenuState(OPTIONS_MENU_MAIN);
             else
                 SetOptionsMenuState(OPTIONS_MENU_CONFIRM_NEW_OPTIONS);

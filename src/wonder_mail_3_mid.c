@@ -120,7 +120,7 @@ static void sub_802F004(void)
         case 2:
             sub_802F108();
             gUnknown_203B30C->unkF0.id[2] = gUnknown_80E03F4;
-            CalculateWindowWidth(&gUnknown_203B30C->unkF0.id[2], gUnknown_203B30C->unkB0);
+            SetCalculatedWindowDims(&gUnknown_203B30C->unkF0.id[2], gUnknown_203B30C->unkB0);
             break;
         default:
             for(index = 0; index < 4; index++)

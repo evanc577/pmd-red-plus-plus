@@ -146,13 +146,13 @@ static void sub_802D1B8(void)
         case 13:
            sub_802D5A4();
            sUnknown_203B2F8->unk1A8.id[2] = sUnknown_80DFE04;
-           CalculateWindowWidth(&sUnknown_203B2F8->unk1A8.id[2], sUnknown_203B2F8->unk118);
+           SetCalculatedWindowDims(&sUnknown_203B2F8->unk1A8.id[2], sUnknown_203B2F8->unk118);
            sUnknown_203B2F8->unk1A8.id[2].width = 6;
            break;
         case 14:
            sub_802D63C();
            sUnknown_203B2F8->unk1A8.id[3] = sUnknown_80DFE1C;
-           CalculateWindowWidth(&sUnknown_203B2F8->unk1A8.id[3], sUnknown_203B2F8->unk158);
+           SetCalculatedWindowDims(&sUnknown_203B2F8->unk1A8.id[3], sUnknown_203B2F8->unk158);
            sUnknown_203B2F8->unk1A8.id[3].width = 6;
            break;
         default:

@@ -160,12 +160,12 @@ void sub_802E0A0(void)
             }
             CreateMailboxMenu();
             gUnknown_203B304->unk10C.id[2] = gUnknown_80E029C;
-            CalculateWindowWidth(&gUnknown_203B304->unk10C.id[2], gUnknown_203B304->menuItems);
+            SetCalculatedWindowDims(&gUnknown_203B304->unk10C.id[2], gUnknown_203B304->menuItems);
             break;
         case MAIL_ACTION_MENU:
             CreateMailActionMenu();
             gUnknown_203B304->unk10C.id[2] = gUnknown_80E02B4;
-            CalculateWindowWidth(&gUnknown_203B304->unk10C.id[2], gUnknown_203B304->menuItems);
+            SetCalculatedWindowDims(&gUnknown_203B304->unk10C.id[2], gUnknown_203B304->menuItems);
             gUnknown_203B304->unk10C.id[2].width = 6;
             gUnknown_203B304->unk10C.id[3] = gUnknown_80E02CC;
             break;

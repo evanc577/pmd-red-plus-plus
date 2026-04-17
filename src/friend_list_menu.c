@@ -210,12 +210,12 @@ static void sub_802544C(void)
 
             sub_8025728();
             gUnknown_203B2B4->unk118.id[2] = sUnknown_80DD160;
-            CalculateWindowWidth(&gUnknown_203B2B4->unk118.id[2], gUnknown_203B2B4->unkC8);
+            SetCalculatedWindowDims(&gUnknown_203B2B4->unk118.id[2], gUnknown_203B2B4->unkC8);
             break;
         case 13:
             sub_802591C();
             gUnknown_203B2B4->unk118.id[2] = sUnknown_80DD178;
-            CalculateWindowWidth(&gUnknown_203B2B4->unk118.id[2], gUnknown_203B2B4->unkC8);
+            SetCalculatedWindowDims(&gUnknown_203B2B4->unk118.id[2], gUnknown_203B2B4->unkC8);
             break;
         default:
             for (i = 0; i < 4; i++)

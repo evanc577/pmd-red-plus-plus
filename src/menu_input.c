@@ -204,7 +204,7 @@ void DrawCharOnWindowWidth12(u32 x, u32 y, u32 chr, u32 color, u32 windowId)
     DrawCharOnWindow(x + add_x, y, chrId, color, windowId);
 }
 
-void CalculateWindowWidth(WindowTemplate *windowTemplate, const MenuItem *menuItems)
+void SetCalculatedWindowDims(WindowTemplate *windowTemplate, const MenuItem *menuItems)
 {
     s32 length;
     s32 maxLength;

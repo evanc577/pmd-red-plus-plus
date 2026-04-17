@@ -117,7 +117,7 @@ static void sub_801E980(void)
             sub_801EBC4();
             sGulpinShopWork->unk12C.id[1] = gUnknown_80DC11C;
             sGulpinShopWork->unk12C.id[2] = gUnknown_80DC134;
-            CalculateWindowWidth(&sGulpinShopWork->unk12C.id[2], sGulpinShopWork->unk28);
+            SetCalculatedWindowDims(&sGulpinShopWork->unk12C.id[2], sGulpinShopWork->unk28);
             break;
         default:
             for(index = 0; index < 4; index++) {

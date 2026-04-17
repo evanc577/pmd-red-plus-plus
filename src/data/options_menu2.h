@@ -28,7 +28,6 @@ static const WindowTemplate sUnknown_80DC03C = {
 
 ALIGNED(4) static const u8 sGameOptions[] = _("Game Options");
 ALIGNED(4) static const u8 sUnknown_80DC064[] = _("Windows{MOVE_X_POSITION_BY_80}Blue{MOVE_X_POSITION_BY_120}Red{MOVE_X_POSITION_BY_160}Green");
-ALIGNED(4) static const u8 sRomhackOptionsFriendAreaCostPtr[] = _("F.area {MOVE_X_POSITION_BY_80}100%{MOVE_X_POSITION_BY_120}50%{MOVE_X_POSITION_BY_160}10%");
 ALIGNED(4) static const u8 sBlue[] = _("Blue");
 ALIGNED(4) static const u8 sRed[] = _("Red");
 ALIGNED(4) static const u8 sGreen[] = _("Green");

@@ -11,7 +11,7 @@ s32 GetKeyPress(MenuInputStruct *r0);
 s32 GetMenuInput(void);
 void PrintNumOnWindow(s32 x, s32 y, s32 num, s32 len, u32 color, u32 windowId);
 void DrawCharOnWindowWidth12(u32 x, u32 y, u32 param_3, u32 color, u32 param_5);
-void CalculateWindowWidth(WindowTemplate *windowTemplate, const MenuItem *menuItems);
+void SetCalculatedWindowDims(WindowTemplate *windowTemplate, const MenuItem *menuItems);
 void sub_8012D08(WindowTemplate *param_1, s32 param_2);
 void sub_8012D34(WindowTemplate *param_1, s32 param_2);
 void sub_8012D60(MenuStruct *param_1, const MenuItem *menuItems, const u32 *colorArray, u16 *param_4, s32 menuAction, s32 index);
