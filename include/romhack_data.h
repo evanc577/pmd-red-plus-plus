@@ -3,13 +3,14 @@
 
 #include "gba/gba.h"
 
-typedef struct RomhackData {
+typedef struct RomhackDataV0 {
     u32 version;
-} RomhackData;
+} RomhackDataV0;
 
-extern RomhackData gRomhackData;
+extern RomhackDataV0 gRomhackData;
 
-void initializeRomhackData(RomhackData *data);
-bool8 RomhackDataNotChanged(RomhackData *newData);
+void InitializeRomhackData();
+
+bool8 RomhackDataNotChanged(RomhackDataV0 *newData);
 
 #endif // GUARD_ROMHACK_DATA_H

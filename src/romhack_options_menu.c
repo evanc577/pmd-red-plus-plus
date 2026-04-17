@@ -10,8 +10,8 @@
 
 static EWRAM_INIT RomhackDataOptionsMenu *sMenu = {NULL};
 
-ALIGNED(4) static const u8 sRomhackOptions[] = ("Romhack Options");
-ALIGNED(4) static const u8 sStringDebug1[] = ("DEBUG 1");
+ALIGNED(4) static const u8 sRomhackOptions[] = "Romhack Options";
+ALIGNED(4) static const u8 sStringDebug1[] = "DEBUG 1";
 
 static const WindowTemplate sDefaultWindowTemplate = {
     .flags = 0,
@@ -42,7 +42,7 @@ static const WindowTemplate sWindowTemplate = {
 
 static void CreateOptionsMenu(void);
 
-bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData) {
+bool8 CreateRomhackOptionsDisplayScreen(RomhackDataV0 *romhackData) {
     sMenu = MemoryAlloc(sizeof(RomhackDataOptionsMenu), MEMALLOC_GROUP_8);
     sMenu->data = romhackData;
     ResetTouchScreenMenuInput(&sMenu->touch);

@@ -1,11 +1,11 @@
 #include "romhack_data.h"
 
-EWRAM_INIT RomhackData gRomhackData = {};
+EWRAM_INIT RomhackDataV0 gRomhackData = {};
 
-void initializeRomhackData(RomhackData *data) {
-    data->version = 0;
+void InitializeRomhackData() {
+    gRomhackData.version = 0;
 }
 
-bool8 RomhackDataNotChanged(RomhackData *newData) {
+bool8 RomhackDataNotChanged(RomhackDataV0 *newData) {
     return TRUE;
 }

@@ -6,7 +6,7 @@
 #include "structs/menu.h"
 
 typedef struct RomhackDataOptionsMenu {
-    RomhackData *data;
+    RomhackDataV0 *data;
     TouchScreenMenuInput touch;
     MenuInputStruct input;
     s32 windowId;
@@ -14,7 +14,7 @@ typedef struct RomhackDataOptionsMenu {
     WindowTemplates windowTemplates;
 } RomhackDataOptionsMenu;
 
-bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData);
+bool8 CreateRomhackOptionsDisplayScreen(RomhackDataV0 *romhackData);
 void DestroyRomhackOptionsDisplayScreen();
 s32 HandleRomhackDataScreenInput(void);
 

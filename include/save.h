@@ -47,7 +47,7 @@ struct UnkStruct_sub_8011DAC
     u32 unk440;
     u32 savedMailInfo;
     u8 unk448[0x538C];
-    u8 savedRomhackData[sizeof(RomhackData)];
+    u8 savedRomhackData[sizeof(RomhackDataV0)];
 };
 
 // size: 0x5C

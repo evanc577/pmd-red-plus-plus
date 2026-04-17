@@ -16,7 +16,7 @@ typedef struct OptionsMenu1State
     /* 0x6C */ MenuItem menuItems[8];
     u16 unkAC[8];
     WindowTemplates window_templates;
-    RomhackData newRomhackData;
+    RomhackDataV0 newRomhackData;
 } OptionsMenu1State;
 
 bool8 sub_801DCC4(void);

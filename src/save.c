@@ -16,8 +16,10 @@
 #include "random.h"
 #include "rescue_scenario.h"
 #include "save.h"
+#include "romhack_data.h"
 #include "string_format.h"
 #include "training_maze.h"
+#include <string.h>
 
 // size: 0x800
 struct unk_struct
@@ -41,6 +43,8 @@ EWRAM_INIT UnkStruct_203B184 *gUnknown_203B184 = { NULL };
 ALIGNED(4) static const char fill_save0[] = _("pksdir0");
 ALIGNED(4) static const char fill_save1[] = _("pksdir0");
 ALIGNED(4) static const char fill_save2[] = _("pksdir0");
+
+static bool8 LoadRomhackSaveData(struct UnkStruct_sub_8011DAC *save);
 
 u32 sub_8011C1C(void)
 {
@@ -257,7 +261,9 @@ u32 ReadSaveFromPak(u32 *a)
             saveStatus = 3;
         }
 
-        MemoryCopy8(&gRomhackData, playerSave->savedRomhackData, sizeof(RomhackData));
+        if (!LoadRomhackSaveData(playerSave)) {
+            saveStatus = 3;
+        }
     }
     MemoryFree(playerSave);
     return saveStatus;
@@ -510,5 +516,23 @@ UNUSED static void sub_8012334(UnkStruct_203B184 *data)
         gFriendAreas = GetBoughtFriendAreas();
         gGameOptionsRef = GetGameOptions();
         gPlayTimeRef = GetPlayTime();
+    }
+}
+
+static bool8 LoadRomhackSaveData(struct UnkStruct_sub_8011DAC *save) {
+    // Read gameInternalName, if it is not "ROM_________HACK", assume we need to create a new save.
+    if (0 != strcmp(gRomhackName, save->gameInternalName)) {
+        InitializeRomhackData();
+        return TRUE;
+    }
+
+    // Read the save version, which is always the first field
+    u32 version = *(u32 *)(save->savedRomhackData);
+    switch (version) {
+        case 0:
+            MemoryCopy8(&gRomhackData, save->savedRomhackData, sizeof(RomhackDataV0));
+            return TRUE;
+        default:
+            return FALSE;
     }
 }
