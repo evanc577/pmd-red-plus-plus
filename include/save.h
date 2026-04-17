@@ -27,29 +27,6 @@ enum
     READ_SAVE_CHECKSUM_ERROR
 };
 
-// size: 0x57D4
-struct UnkStruct_sub_8011DAC
-{
-    u8 fill000[0x4];
-    u8 unk004[0x400];
-    u8 gameInternalName[0x10]; // has "POKE_DUNGEON__05"
-    u32 checksum;
-    u32 unk418;
-    u32 unk41C;
-    u32 RngState;
-    u32 savedRecruitedPokemon;
-    u32 unk428;
-    u8 fill42C[0x4];
-    u32 savedTeamInventory;
-    u32 savedRescueTeamInfo;
-    u32 savedFriendAreas;
-    u32 unk43C;
-    u32 unk440;
-    u32 savedMailInfo;
-    u8 unk448[0x538C];
-    u8 savedRomhackData[sizeof(RomhackDataV0)];
-};
-
 // size: 0x5C
 // This is most likely a debug savestate
 typedef struct UnkStruct_203B184

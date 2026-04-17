@@ -2,15 +2,24 @@
 #define GUARD_ROMHACK_DATA_H
 
 #include "gba/gba.h"
+#include "structs/save.h"
 
-typedef struct RomhackDataV0 {
-    u32 version;
-} RomhackDataV0;
-
-extern RomhackDataV0 gRomhackData;
+extern RomhackData gRomhackData;
 
 void InitializeRomhackData();
+bool8 LoadRomhackSaveData(struct UnkStruct_sub_8011DAC *save);
+bool8 RomhackDataNotChanged(RomhackData *newData);
 
-bool8 RomhackDataNotChanged(RomhackDataV0 *newData);
+typedef enum RomhackOptionType {
+    ROMHACK_OPTION_TEXT_ONLY,
+    ROMHACK_OPTION_MULTIPLIER,
+    ROMHACK_OPTION_ON_OFF,
+} RomhackOptionType;
+
+typedef struct RomhackOption {
+    const char *const name;
+    const RomhackOptionType type;
+    void *const data;
+} RomhackOption;
 
 #endif // GUARD_ROMHACK_DATA_H

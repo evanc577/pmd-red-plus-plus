@@ -44,8 +44,6 @@ ALIGNED(4) static const char fill_save0[] = _("pksdir0");
 ALIGNED(4) static const char fill_save1[] = _("pksdir0");
 ALIGNED(4) static const char fill_save2[] = _("pksdir0");
 
-static bool8 LoadRomhackSaveData(struct UnkStruct_sub_8011DAC *save);
-
 u32 sub_8011C1C(void)
 {
     return gUnknown_203B17C;
@@ -88,6 +86,8 @@ void CalculateChecksum(u8 *out, u32 size)
 
 bool8 ValidateChecksum(u8 *in, u32 size)
 {
+    return FALSE;
+#if 0
     u32 checksum = 0;
     s32 i = size / 4;
     if (i > 1)
@@ -101,6 +101,7 @@ bool8 ValidateChecksum(u8 *in, u32 size)
     if (*(u32 *)in != checksum)
         return TRUE;
     return FALSE;
+#endif
 }
 
 void sub_8011CA8(u32 *out, s32 size)
@@ -516,23 +517,5 @@ UNUSED static void sub_8012334(UnkStruct_203B184 *data)
         gFriendAreas = GetBoughtFriendAreas();
         gGameOptionsRef = GetGameOptions();
         gPlayTimeRef = GetPlayTime();
-    }
-}
-
-static bool8 LoadRomhackSaveData(struct UnkStruct_sub_8011DAC *save) {
-    // Read gameInternalName, if it is not "ROM_________HACK", assume we need to create a new save.
-    if (0 != strcmp(gRomhackName, save->gameInternalName)) {
-        InitializeRomhackData();
-        return TRUE;
-    }
-
-    // Read the save version, which is always the first field
-    u32 version = *(u32 *)(save->savedRomhackData);
-    switch (version) {
-        case 0:
-            MemoryCopy8(&gRomhackData, save->savedRomhackData, sizeof(RomhackDataV0));
-            return TRUE;
-        default:
-            return FALSE;
     }
 }

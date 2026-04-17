@@ -42,7 +42,7 @@ static const WindowTemplate sWindowTemplate = {
 
 static void CreateOptionsMenu(void);
 
-bool8 CreateRomhackOptionsDisplayScreen(RomhackDataV0 *romhackData) {
+bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData) {
     sMenu = MemoryAlloc(sizeof(RomhackDataOptionsMenu), MEMALLOC_GROUP_8);
     sMenu->data = romhackData;
     ResetTouchScreenMenuInput(&sMenu->touch);
