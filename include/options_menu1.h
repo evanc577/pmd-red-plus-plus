@@ -5,7 +5,7 @@
 #include "structs/menu.h"
 
 // size: 0x11C
-struct unkStruct_203B25C
+typedef struct OptionsMenu1State
 {
     /* 0x0 */ u32 state;
     /* 0x4 */ u32 chosenHintIndex;
@@ -14,8 +14,8 @@ struct unkStruct_203B25C
     /* 0x1C */ MenuStruct menu;
     /* 0x6C */ MenuItem menuItems[8];
     u16 unkAC[8];
-    WindowTemplates unkBC;
-};
+    WindowTemplates window_templates;
+} OptionsMenu1State;
 
 bool8 sub_801DCC4(void);
 u32 sub_801DCE8(void);

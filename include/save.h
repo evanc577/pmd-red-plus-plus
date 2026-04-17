@@ -8,7 +8,6 @@
 #include "pokemon.h"
 #include "rescue_team_info.h"
 #include "romhack_data.h"
-#include "romhack_save.h"
 #include "code_8094F88.h"
 #include "code_80958E8.h"
 

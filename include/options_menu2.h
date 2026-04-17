@@ -12,10 +12,10 @@ struct unkStruct_203B260
     /* 0x10 */ MenuInputStruct input;
     u32 unk44;
     WindowTemplate *unk48;
-    WindowTemplates unk4C;
+    WindowTemplates window_templates;
 };
 
-bool8 sub_801E198(GameOptions *optionsMenu);
+bool8 CreateOthersDisplayScreen(GameOptions *optionsMenu);
 u32 sub_801E218(void);
 void sub_801E2C4(void);
 

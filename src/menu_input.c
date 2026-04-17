@@ -204,7 +204,7 @@ void DrawCharOnWindowWidth12(u32 x, u32 y, u32 chr, u32 color, u32 windowId)
     DrawCharOnWindow(x + add_x, y, chrId, color, windowId);
 }
 
-void sub_8012CAC(WindowTemplate *a0, const MenuItem *a1)
+void sub_8012CAC(WindowTemplate *windowTemplate, const MenuItem *menuItems)
 {
     s32 length;
     s32 maxLength;
@@ -213,16 +213,16 @@ void sub_8012CAC(WindowTemplate *a0, const MenuItem *a1)
     count = 0;
     maxLength = 0;
 
-    for (; a1->text != NULL; a1++) {
+    for (; menuItems->text != NULL; menuItems++) {
         count = (s16)(count + 1); // Because a simple `count++;` wasn't enough.
-        length = (s16) GetStringLineWidth(a1->text);
+        length = (s16) GetStringLineWidth(menuItems->text);
         if (length > maxLength) {
             maxLength = length;
         }
   }
 
-    a0->width = (maxLength / 8) + 2;
-    sub_8012D08(a0, count);
+    windowTemplate->width = (maxLength / 8) + 2;
+    sub_8012D08(windowTemplate, count);
 }
 
 void sub_8012D08(WindowTemplate *winTemplate, s32 entriesCount)

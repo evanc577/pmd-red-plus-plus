@@ -18,7 +18,8 @@ enum
     MENU_OPTION_HINTS,
     MENU_OPTION_GAMEOPTIONS,
     MENU_OPTION_YES,
-    MENU_OPTION_NO
+    MENU_OPTION_NO,
+    MENU_OPTION_ROMHACK_OPTIONS,
 };
 
 enum OptionsMenuStates
@@ -31,34 +32,37 @@ enum OptionsMenuStates
     OPTIONS_MENU_DISPLAY_HINT,
     OPTIONS_MENU_UNKNOWN_6,
     OPTIONS_MENU_CONFIRM_NEW_OPTIONS,
+    OPTIONS_MENU_ROMHACK_OPTIONS,
 };
 
-static EWRAM_INIT struct unkStruct_203B25C *sUnknown_203B25C = {NULL};
+static EWRAM_INIT OptionsMenu1State *sOptionsMenu1State = {NULL};
 
 #include "data/options_menu1.h"
 
 static void CreateChangeSettingsConfirmMenu(void);
 static void CreateOthersMenu(void);
+static void CreateRomhackOptionsMenu(void);
 static void HandleChangeSettingsMenu(void);
 static void HandleOthersMenu(void);
 static void SetOptionsMenuState(u32 newState);
+static void SetRomhackOptionsMenuState(u32 newState);
 
-static void sub_801DD84(void);
-static void sub_801DED0(void);
+static void CreateAllMenus(void);
+static void GameOptionsMenuTransition(void);
 static void sub_801E088(void);
 static void sub_801E0E0(void);
 static void sub_801E0FC(void);
 
 bool8 sub_801DCC4(void)
 {
-    sUnknown_203B25C = MemoryAlloc(sizeof(struct unkStruct_203B25C), MEMALLOC_GROUP_8);
+    sOptionsMenu1State = MemoryAlloc(sizeof(OptionsMenu1State), MEMALLOC_GROUP_8);
     SetOptionsMenuState(OPTIONS_MENU_INIT);
     return TRUE;
 }
 
 u32 sub_801DCE8(void)
 {
-    switch (sUnknown_203B25C->state) {
+    switch (sOptionsMenu1State->state) {
         case OPTIONS_MENU_EXIT:
             return 3;
         case OPTIONS_MENU_INIT:
@@ -87,70 +91,75 @@ u32 sub_801DCE8(void)
 
 void sub_801DD50(void)
 {
-    if (sUnknown_203B25C != NULL) {
-        MemoryFree(sUnknown_203B25C);
-        sUnknown_203B25C = NULL;
+    if (sOptionsMenu1State != NULL) {
+        MemoryFree(sOptionsMenu1State);
+        sOptionsMenu1State = NULL;
     }
 }
 
 static void SetOptionsMenuState(u32 newState)
 {
-    sUnknown_203B25C->state = newState;
-    sub_801DD84();
-    sub_801DED0();
+    sOptionsMenu1State->state = newState;
+    CreateAllMenus();
+    GameOptionsMenuTransition();
 }
 
-static void sub_801DD84(void)
+static void SetRomhackOptionsMenuState(u32 newState)
+{
+    sOptionsMenu1State->state = newState;
+    CreateAllMenus();
+    GameOptionsMenuTransition();
+}
+
+static void CreateAllMenus(void)
 {
     s32 i;
 
-    RestoreSavedWindows(&sUnknown_203B25C->unkBC);
+    RestoreSavedWindows(&sOptionsMenu1State->window_templates);
 
-    switch (sUnknown_203B25C->state) {
+    switch (sOptionsMenu1State->state) {
         case OPTIONS_MENU_INIT:
             CreateOthersMenu();
 
             for (i = 0; i < 8; i++) {
-                if (sUnknown_203B25C->unkAC[i] == 0) {
-                    sUnknown_203B25C->menuAction = sUnknown_203B25C->menuItems[i].menuAction;
+                if (sOptionsMenu1State->unkAC[i] == 0) {
+                    sOptionsMenu1State->menuAction = sOptionsMenu1State->menuItems[i].menuAction;
                     break;
                 }
             }
 
             for(i = 0; i < 4; i++)
-                sUnknown_203B25C->unkBC.id[i] = sUnknown_80DBFB0;
+                sOptionsMenu1State->window_templates.id[i] = sDefaultWindowTemplate;
 
-            sUnknown_203B25C->unkBC.id[0] = sUnknown_80DBFCC;
-            sub_8012CAC(&sUnknown_203B25C->unkBC.id[0], sUnknown_203B25C->menuItems);
-            sUnknown_203B25C->unkBC.id[0].width = 10;
+            sOptionsMenu1State->window_templates.id[0] = sWindowTemplate;
+            sub_8012CAC(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
             break;
         case OPTIONS_MENU_MAIN:
             CreateOthersMenu();
 
             for (i = 0; i < 4; i++)
-                sUnknown_203B25C->unkBC.id[i] = sUnknown_80DBFB0;
+                sOptionsMenu1State->window_templates.id[i] = sDefaultWindowTemplate;
 
-            sUnknown_203B25C->unkBC.id[0] = sUnknown_80DBFCC;
-            sub_8012CAC(&sUnknown_203B25C->unkBC.id[0], sUnknown_203B25C->menuItems);
-            sUnknown_203B25C->unkBC.id[0].width = 10;
+            sOptionsMenu1State->window_templates.id[0] = sWindowTemplate;
+            sub_8012CAC(&sOptionsMenu1State->window_templates.id[0], sOptionsMenu1State->menuItems);
             break;
         default:
             for (i = 0; i < 4; i++)
-                sUnknown_203B25C->unkBC.id[i] = sUnknown_80DBFB0;
+                sOptionsMenu1State->window_templates.id[i] = sDefaultWindowTemplate;
             break;
     }
 
     ResetUnusedInputStruct();
-    ShowWindows(&sUnknown_203B25C->unkBC, TRUE, TRUE);
+    ShowWindows(&sOptionsMenu1State->window_templates, TRUE, TRUE);
 }
 
-static void sub_801DED0(void)
+static void GameOptionsMenuTransition(void)
 {
-    switch (sUnknown_203B25C->state) {
+    switch (sOptionsMenu1State->state) {
         case OPTIONS_MENU_INIT:
         case OPTIONS_MENU_MAIN:
-            sUnknown_203B25C->menu.unk0 = sOthers;
-            sub_8012D60(&sUnknown_203B25C->menu, sUnknown_203B25C->menuItems, 0, sUnknown_203B25C->unkAC, sUnknown_203B25C->menuAction, 0);
+            sOptionsMenu1State->menu.unk0 = sOthers;
+            sub_8012D60(&sOptionsMenu1State->menu, sOptionsMenu1State->menuItems, 0, sOptionsMenu1State->unkAC, sOptionsMenu1State->menuAction, 0);
             break;
         case OPTIONS_MENU_PRE_HINT_SELECTION:
             sub_801E3F0(0);
@@ -159,16 +168,19 @@ static void sub_801DED0(void)
             CreateHintSelectionScreen(1);
             break;
         case OPTIONS_MENU_DISPLAY_HINT:
-            CreateHintDisplayScreen(sUnknown_203B25C->chosenHintIndex);
+            CreateHintDisplayScreen(sOptionsMenu1State->chosenHintIndex);
             break;
-        case 6:
+        case OPTIONS_MENU_UNKNOWN_6:
             // Load our current options?
-            sUnknown_203B25C->newOptions = *gGameOptionsRef;
-            sub_801E198(&sUnknown_203B25C->newOptions);
+            sOptionsMenu1State->newOptions = *gGameOptionsRef;
+            CreateOthersDisplayScreen(&sOptionsMenu1State->newOptions);
             break;
         case OPTIONS_MENU_CONFIRM_NEW_OPTIONS:
             CreateChangeSettingsConfirmMenu();
-            CreateMenuDialogueBoxAndPortrait(sChangeSettingsPrompt, 0, 4, sUnknown_203B25C->menuItems, 0, 4, 0, 0, 32);
+            CreateMenuDialogueBoxAndPortrait(sChangeSettingsPrompt, 0, 4, sOptionsMenu1State->menuItems, 0, 4, 0, 0, 32);
+            break;
+        case OPTIONS_MENU_ROMHACK_OPTIONS:
+            CreateRomhackOptionsMenu();
             break;
     }
 }
@@ -177,38 +189,48 @@ static void CreateOthersMenu(void)
 {
     s32 loopMax;
 
-    MemoryFill16(sUnknown_203B25C->unkAC, 0, sizeof(sUnknown_203B25C->unkAC));
+    MemoryFill16(sOptionsMenu1State->unkAC, 0, sizeof(sOptionsMenu1State->unkAC));
     loopMax = 0;
 
-    sUnknown_203B25C->menuItems[loopMax].text = sGameOptions;
-    sUnknown_203B25C->menuItems[loopMax].menuAction = MENU_OPTION_GAMEOPTIONS;
+    sOptionsMenu1State->menuItems[loopMax].text = sGameOptions;
+    sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_GAMEOPTIONS;
 
     loopMax++;
-    sUnknown_203B25C->menuItems[loopMax].text = sHints;
-    sUnknown_203B25C->menuItems[loopMax].menuAction = MENU_OPTION_HINTS;
+    sOptionsMenu1State->menuItems[loopMax].text = sRomhackOptions;
+    sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_ROMHACK_OPTIONS;
 
     loopMax++;
-    sUnknown_203B25C->menuItems[loopMax].text = NULL;
-    sUnknown_203B25C->menuItems[loopMax].menuAction = MENU_OPTION_DEFAULT;
+    sOptionsMenu1State->menuItems[loopMax].text = sHints;
+    sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_HINTS;
+
+    loopMax++;
+    sOptionsMenu1State->menuItems[loopMax].text = NULL;
+    sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_DEFAULT;
 }
 
 static void CreateChangeSettingsConfirmMenu(void)
 {
     s32 loopMax;
 
-    MemoryFill16(sUnknown_203B25C->unkAC, 0, sizeof(sUnknown_203B25C->unkAC));
+    MemoryFill16(sOptionsMenu1State->unkAC, 0, sizeof(sOptionsMenu1State->unkAC));
     loopMax = 0;
 
-    sUnknown_203B25C->menuItems[loopMax].text = gCommonYes[0];
-    sUnknown_203B25C->menuItems[loopMax].menuAction = MENU_OPTION_YES;
+    sOptionsMenu1State->menuItems[loopMax].text = gCommonYes[0];
+    sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_YES;
 
     loopMax++;
-    sUnknown_203B25C->menuItems[loopMax].text = gCommonNo[0];
-    sUnknown_203B25C->menuItems[loopMax].menuAction = MENU_OPTION_NO;
+    sOptionsMenu1State->menuItems[loopMax].text = gCommonNo[0];
+    sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_NO;
 
     loopMax++;
-    sUnknown_203B25C->menuItems[loopMax].text = NULL;
-    sUnknown_203B25C->menuItems[loopMax].menuAction = MENU_OPTION_DEFAULT;
+    sOptionsMenu1State->menuItems[loopMax].text = NULL;
+    sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_DEFAULT;
+}
+
+static void CreateRomhackOptionsMenu(void)
+{
+    s32 LoopMax;
+    (void)LoopMax;
 }
 
 static void HandleOthersMenu(void)
@@ -217,9 +239,9 @@ static void HandleOthersMenu(void)
 
     menuAction = 0;
 
-    if (sub_8012FD8(&sUnknown_203B25C->menu) == 0) {
-        sub_8013114(&sUnknown_203B25C->menu, &menuAction);
-        sUnknown_203B25C->menuAction = menuAction;
+    if (sub_8012FD8(&sOptionsMenu1State->menu) == 0) {
+        sub_8013114(&sOptionsMenu1State->menu, &menuAction);
+        sOptionsMenu1State->menuAction = menuAction;
     }
 
     switch (menuAction) {
@@ -227,7 +249,10 @@ static void HandleOthersMenu(void)
             SetOptionsMenuState(OPTIONS_MENU_PRE_HINT_SELECTION);
             break;
         case MENU_OPTION_GAMEOPTIONS:
-            SetOptionsMenuState(6);
+            SetOptionsMenuState(OPTIONS_MENU_UNKNOWN_6);
+            break;
+        case MENU_OPTION_ROMHACK_OPTIONS:
+            SetRomhackOptionsMenuState(OPTIONS_MENU_ROMHACK_OPTIONS);
             break;
         case MENU_OPTION_DEFAULT:
             SetOptionsMenuState(OPTIONS_MENU_EXIT);
@@ -240,7 +265,7 @@ static void sub_801E088(void)
     switch (sub_801E474(TRUE)) {
         case 3:
         case 4:
-            sUnknown_203B25C->chosenHintIndex = GetChosenHintIndex();
+            sOptionsMenu1State->chosenHintIndex = GetChosenHintIndex();
             SetOptionsMenuState(OPTIONS_MENU_DISPLAY_HINT);
             break;
         case 2:
@@ -277,7 +302,7 @@ static void sub_801E0FC(void)
             sub_801E2C4();
 
             // Check to see if the options changed?
-            if (GameOptionsNotChange(&sUnknown_203B25C->newOptions))
+            if (GameOptionsNotChange(&sOptionsMenu1State->newOptions))
                 SetOptionsMenuState(OPTIONS_MENU_MAIN);
             else
                 SetOptionsMenuState(OPTIONS_MENU_CONFIRM_NEW_OPTIONS);
@@ -298,7 +323,7 @@ static void HandleChangeSettingsMenu(void)
     switch (menuAction) {
         case MENU_OPTION_YES:
             // Save our option changes??
-            *gGameOptionsRef = sUnknown_203B25C->newOptions;
+            *gGameOptionsRef = sOptionsMenu1State->newOptions;
             SetWindowBGColor();
             sub_8099690(0);
             SetOptionsMenuState(OPTIONS_MENU_MAIN);
