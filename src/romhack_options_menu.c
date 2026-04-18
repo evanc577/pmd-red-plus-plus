@@ -7,9 +7,11 @@
 #include "memory.h"
 #include "menu_input.h"
 #include "music_util.h"
+#include "structs/save.h"
 #include "text_1.h"
 #include "text_2.h"
 #include "text_3.h"
+#include <stddef.h>
 
 static EWRAM_INIT RomhackDataOptionsMenu *sMenu = {NULL};
 
@@ -20,12 +22,12 @@ const RomhackOption sRomhackOptions[] = {
     {
         .name = "Friend area cost",
         .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
+        .dataOffset = offsetof(RomhackData, friendAreaCostMult),
     },
     {
         .name = "Gummi IQ effect",
         .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.gummiIqMult),
+        .dataOffset = offsetof(RomhackData, gummiIqMult),
     },
 };
 
@@ -56,8 +58,15 @@ static const WindowTemplate sWindowTemplate = {
     .header = &sWindowHeader
 };
 
+static RomhackMultiplier *GetMultiplier(RomhackData *data, const RomhackOption *const option);
 static void UpdateHeightHeader(void);
 static void CreateOptionsMenu(void);
+
+typedef enum MultiplierUpdate {
+    MULTIPLIER_INCREASE,
+    MULTIPLIER_DECREASE,
+} MultiplierUpdate;
+static bool8 UpdateMultiplier(RomhackMultiplier *value, MultiplierUpdate update);
 
 bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData) {
     sMenu = MemoryAlloc(sizeof(RomhackDataOptionsMenu), MEMALLOC_GROUP_8);
@@ -94,6 +103,10 @@ static void UpdateHeightHeader(void) {
 }
 
 s32 HandleRomhackDataScreenInput(void) {
+    u32 optionIdx = sMenu->menuHeaderWindow.m.input.currPage *
+        sMenu->menuHeaderWindow.m.input.entriesPerPage +
+        sMenu->menuHeaderWindow.m.input.menuIndex;
+    bool8 updated = FALSE;
     switch (GetMenuInput()) {
         case INPUT_B_BUTTON:
         PlayMenuSoundEffect(MENU_SFX_BACK);
@@ -101,8 +114,15 @@ s32 HandleRomhackDataScreenInput(void) {
         case INPUT_A_BUTTON:
             PlayMenuSoundEffect(MENU_SFX_ACCEPT);
             return 3;
+        case INPUT_L_BUTTON:
+            updated = UpdateMultiplier(GetMultiplier(sMenu->data, &sRomhackOptions[optionIdx]), MULTIPLIER_DECREASE);
+            break;
+        case INPUT_R_BUTTON: {
+            updated = UpdateMultiplier(GetMultiplier(sMenu->data, &sRomhackOptions[optionIdx]), MULTIPLIER_INCREASE);
+            break;
+        }
     }
-    if (0 != MenuCursorUpdate(&sMenu->menuHeaderWindow.m.input, TRUE)) {
+    if (0 != MenuCursorUpdate(&sMenu->menuHeaderWindow.m.input, TRUE) || updated) {
         UpdateHeightHeader();
         CreateOptionsMenu();
         return 1;
@@ -129,15 +149,45 @@ static void CreateOptionsMenu(void) {
             }
             case ROMHACK_OPTION_MULTIPLIER: {
                 u8 buffer[256];
-                u32 value = ((RomhackMultiplier *)sRomhackOptions[optionIdx].data)->value;
+                u32 value = GetMultiplier(sMenu->data, &sRomhackOptions[optionIdx])->value;
                 sprintfStatic(buffer, _("%s{MOVE_X_POSITION}%c{L_BUTTON}%03d%%{R_BUTTON}{RESET}"), sRomhackOptions[optionIdx].name, 140, value);
                 PrintStringOnWindow(8, y, buffer, sMenu->menuHeaderWindow.m.menuWinId, 0);
                 break;
             }
             case ROMHACK_OPTION_ON_OFF: {
+                PrintStringOnWindow(8, y, sRomhackOptions[optionIdx].name, sMenu->menuHeaderWindow.m.menuWinId, 0);
                 break;
             }
         }
     }
     sub_80073E0(sMenu->menuHeaderWindow.m.menuWinId);
+}
+
+static bool8 UpdateMultiplier(RomhackMultiplier *value, MultiplierUpdate update) {
+    switch (update) {
+        case MULTIPLIER_INCREASE:
+            if (value->value >= 1000) {
+                PlayMenuSoundEffect(MENU_SFX_FAIL);
+                return FALSE;
+            } else {
+                PlayMenuSoundEffect(MENU_SFX_TOGGLE);
+                value->value += 10;
+                return TRUE;
+            }
+        case MULTIPLIER_DECREASE:
+            if (value->value <= 0) {
+                PlayMenuSoundEffect(MENU_SFX_FAIL);
+                return FALSE;
+            } else {
+                PlayMenuSoundEffect(MENU_SFX_TOGGLE);
+                value->value -= 10;
+                return TRUE;
+            }
+    }
+}
+
+static RomhackMultiplier *GetMultiplier(RomhackData *data, const RomhackOption *const option) {
+    u32 offset = option->dataOffset;
+    void *ptr = ((void *)data) + offset;
+    return (RomhackMultiplier *)ptr;
 }

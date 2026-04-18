@@ -36,7 +36,13 @@ enum OptionsMenuStates
     OPTIONS_MENU_ROMHACK_OPTIONS,
 };
 
+enum OptionType {
+    TYPE_GAME_OPTIONS,
+    TYPE_ROMHACK,
+};
+
 static EWRAM_INIT OptionsMenu1State *sOptionsMenu1State = {NULL};
+static EWRAM_INIT enum OptionType sOptionType = TYPE_GAME_OPTIONS;
 
 #include "data/options_menu1.h"
 
@@ -295,6 +301,7 @@ static void sub_801E0E0(void)
 
 static void sub_801E0FC(void)
 {
+    sOptionType = TYPE_GAME_OPTIONS;
     switch (sub_801E218()) {
         case 2:
         case 3:
@@ -314,6 +321,7 @@ static void sub_801E0FC(void)
 
 static void HandleRomhackScreen(void)
 {
+    sOptionType = TYPE_ROMHACK;
     switch (HandleRomhackDataScreenInput()) {
         case 2:
         case 3:
@@ -340,9 +348,16 @@ static void HandleChangeSettingsMenu(void)
 
     switch (menuAction) {
         case MENU_OPTION_YES:
-            // Save our option changes??
-            *gGameOptionsRef = sOptionsMenu1State->newOptions;
-            SetWindowBGColor();
+            switch (sOptionType) {
+                // Save our option changes
+                case TYPE_GAME_OPTIONS:
+                    *gGameOptionsRef = sOptionsMenu1State->newOptions;
+                    SetWindowBGColor();
+                    break;
+                case TYPE_ROMHACK:
+                    gRomhackData = sOptionsMenu1State->newRomhackData;
+                    break;
+            }
             sub_8099690(0);
             SetOptionsMenuState(OPTIONS_MENU_MAIN);
             break;

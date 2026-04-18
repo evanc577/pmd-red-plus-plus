@@ -15,6 +15,11 @@ void InitializeRomhackData() {
 }
 
 bool8 RomhackDataNotChanged(RomhackData *newData) {
+    if (gRomhackData.gummiIqMult.value != newData->gummiIqMult.value) {
+        return FALSE;
+    } else if (gRomhackData.friendAreaCostMult.value != newData->friendAreaCostMult.value) {
+        return FALSE;
+    }
     return TRUE;
 }
 
