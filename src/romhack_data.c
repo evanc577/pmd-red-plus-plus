@@ -8,19 +8,6 @@ extern const char *gRomhackName;
 
 static RomhackMultiplier DefaultRomhackMultiplier();
 
-const RomhackOption gRomhackOptions[] = {
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Gummi IQ eff",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.gummiIqMult),
-    },
-};
-
 void InitializeRomhackData() {
     gRomhackData.version = 0;
     gRomhackData.friendAreaCostMult = DefaultRomhackMultiplier();

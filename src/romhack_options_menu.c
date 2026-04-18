@@ -1,5 +1,6 @@
 #include "romhack_options_menu.h"
 
+#include "global.h"
 #include "input.h"
 #include "memory.h"
 #include "menu_input.h"
@@ -10,8 +11,21 @@
 
 static EWRAM_INIT RomhackDataOptionsMenu *sMenu = {NULL};
 
-ALIGNED(4) static const u8 sRomhackOptions[] = "Romhack Options";
+ALIGNED(4) static const u8 sStringRomhackOptions[] = "Romhack Options";
 ALIGNED(4) static const u8 sStringDebug1[] = "DEBUG 1";
+
+const RomhackOption sRomhackOptions[] = {
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Gummi IQ eff",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.gummiIqMult),
+    },
+};
 
 static const WindowTemplate sDefaultWindowTemplate = {
     .flags = 0,
@@ -50,10 +64,10 @@ bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData) {
     sMenu->currWindowTemplate = &sMenu->windowTemplates.id[0];
     RestoreSavedWindows(&sMenu->windowTemplates);
     sMenu->windowTemplates.id[sMenu->windowId] = sWindowTemplate;
-    sub_8012D08(sMenu->currWindowTemplate, 1);
+    sub_8012D08(sMenu->currWindowTemplate, ARRAY_COUNT(sRomhackOptions));
     ResetUnusedInputStruct();
     ShowWindows(&sMenu->windowTemplates, TRUE, TRUE);
-    CreateMenuOnWindow(&sMenu->input, 1, 1, sMenu->windowId);
+    CreateMenuOnWindow(&sMenu->input, ARRAY_COUNT(sRomhackOptions), 10, sMenu->windowId);
     CreateOptionsMenu();
     return TRUE;
 }
@@ -68,33 +82,11 @@ void DestroyRomhackOptionsDisplayScreen() {
 s32 HandleRomhackDataScreenInput(void) {
     switch (GetMenuInput()) {
         case INPUT_B_BUTTON:
-            PlayMenuSoundEffect(MENU_SFX_BACK);
+        PlayMenuSoundEffect(MENU_SFX_BACK);
             return 2;
-    /*     case INPUT_A_BUTTON: */
-    /*         PlayMenuSoundEffect(MENU_SFX_ACCEPT); */
-    /*         return 3; */
-    /*     case INPUT_DPAD_LEFT: */
-    /*         if (sMenu->input.menuIndex == 0) { */
-    /*             if (sMenu->optionsMenu->windowColor == WINDOW_COLOR_BLUE) */
-    /*                 sMenu->optionsMenu->windowColor = WINDOW_COLOR_GREEN; */
-    /*             else */
-    /*                 sMenu->optionsMenu->windowColor--; */
-    /**/
-    /*             PlayMenuSoundEffect(MENU_SFX_NAVIGATE); */
-    /*             flag = TRUE; */
-    /*         } */
-    /*         break; */
-    /*     case INPUT_DPAD_RIGHT: */
-    /*         if (sMenu->input.menuIndex == 0) { */
-    /*             if (sMenu->optionsMenu->windowColor > WINDOW_COLOR_RED) */
-    /*                 sMenu->optionsMenu->windowColor = WINDOW_COLOR_BLUE; */
-    /*             else */
-    /*                 sMenu->optionsMenu->windowColor++; */
-    /**/
-    /*             PlayMenuSoundEffect(MENU_SFX_NAVIGATE); */
-    /*             flag = TRUE; */
-    /*         } */
-    /*         break; */
+        case INPUT_A_BUTTON:
+            PlayMenuSoundEffect(MENU_SFX_ACCEPT);
+            return 3;
     }
     MenuCursorUpdate(&sMenu->input, TRUE);
     return 0;
@@ -102,14 +94,16 @@ s32 HandleRomhackDataScreenInput(void) {
 
 static void CreateOptionsMenu(void) {
     /* u32 length; */
-    u32 y;
+    u32 i;
+    u32 y[ARRAY_COUNT(sRomhackOptions)];
 
-    CallPrepareTextbox_8008C54(sMenu->windowId);
+    for (i = 0; i < ARRAY_COUNT(y); ++i) {
+        y[i] = GetMenuEntryYCoord(&sMenu->input, i);
+    }
     sub_80073B8(sMenu->windowId);
-    PrintStringOnWindow(16, 0, sRomhackOptions, sMenu->windowId, 0);
-
-    y = GetMenuEntryYCoord(&sMenu->input, 0);
-    PrintStringOnWindow(8, y, sStringDebug1, sMenu->windowId, 0);
-
+    PrintStringOnWindow(16, 0, sStringRomhackOptions, sMenu->windowId, 0);
+    for (i = 0; i < ARRAY_COUNT(y); ++i) {
+        PrintStringOnWindow(8, y[i], sRomhackOptions[i].name, sMenu->windowId, 0);
+    }
     sub_80073E0(sMenu->windowId);
 }
