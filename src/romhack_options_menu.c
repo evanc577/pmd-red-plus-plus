@@ -21,6 +21,86 @@ const RomhackOption sRomhackOptions[] = {
         .data = (void *)(&gRomhackData.friendAreaCostMult),
     },
     {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
+        .name = "Friend area cost",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .data = (void *)(&gRomhackData.friendAreaCostMult),
+    },
+    {
         .name = "Gummi IQ eff",
         .type = ROMHACK_OPTION_MULTIPLIER,
         .data = (void *)(&gRomhackData.gummiIqMult),
@@ -54,20 +134,22 @@ static const WindowTemplate sWindowTemplate = {
     .header = &sWindowHeader
 };
 
+static void UpdateHeightHeader(void);
 static void CreateOptionsMenu(void);
 
 bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData) {
     sMenu = MemoryAlloc(sizeof(RomhackDataOptionsMenu), MEMALLOC_GROUP_8);
     sMenu->data = romhackData;
-    ResetTouchScreenMenuInput(&sMenu->touch);
-    sMenu->windowId = 0;
-    sMenu->currWindowTemplate = &sMenu->windowTemplates.id[0];
-    RestoreSavedWindows(&sMenu->windowTemplates);
-    sMenu->windowTemplates.id[sMenu->windowId] = sWindowTemplate;
-    sub_8012D08(sMenu->currWindowTemplate, ARRAY_COUNT(sRomhackOptions));
+    sMenu->menuHeaderWindow.m.menuWinId = 0;
+    sMenu->menuHeaderWindow.m.menuWindow = &sMenu->menuHeaderWindow.m.windows.id[0];
+    RestoreSavedWindows(&sMenu->menuHeaderWindow.m.windows);
+    sMenu->menuHeaderWindow.m.windows.id[sMenu->menuHeaderWindow.m.menuWinId] = sWindowTemplate;
+    sMenu->menuHeaderWindow.m.menuWindow->header = &sMenu->menuHeaderWindow.header;
     ResetUnusedInputStruct();
-    ShowWindows(&sMenu->windowTemplates, TRUE, TRUE);
-    CreateMenuOnWindow(&sMenu->input, ARRAY_COUNT(sRomhackOptions), 10, sMenu->windowId);
+    ShowWindows(&sMenu->menuHeaderWindow.m.windows, TRUE, TRUE);
+    CreateMenuOnWindow(&sMenu->menuHeaderWindow.m.input, ARRAY_COUNT(sRomhackOptions), 10, sMenu->menuHeaderWindow.m.menuWinId);
+    UpdateHeightHeader();
+
     CreateOptionsMenu();
     return TRUE;
 }
@@ -77,6 +159,16 @@ void DestroyRomhackOptionsDisplayScreen() {
         MemoryFree(sMenu);
         sMenu = NULL;
     }
+}
+static void UpdateHeightHeader(void) {
+    sMenu->menuHeaderWindow.header.count = 1;
+    sMenu->menuHeaderWindow.header.currId = 0;
+    sMenu->menuHeaderWindow.header.width = 12;
+    sMenu->menuHeaderWindow.header.f3 = 0;
+    ResetUnusedInputStruct();
+    ShowWindows(&sMenu->menuHeaderWindow.m.windows, TRUE, TRUE);
+
+    UPDATE_MENU_WINDOW_HEIGHT(sMenu->menuHeaderWindow.m);
 }
 
 s32 HandleRomhackDataScreenInput(void) {
@@ -88,22 +180,27 @@ s32 HandleRomhackDataScreenInput(void) {
             PlayMenuSoundEffect(MENU_SFX_ACCEPT);
             return 3;
     }
-    MenuCursorUpdate(&sMenu->input, TRUE);
+    if (0 != MenuCursorUpdate(&sMenu->menuHeaderWindow.m.input, TRUE)) {
+        UpdateHeightHeader();
+        CreateOptionsMenu();
+        return 1;
+    }
     return 0;
 }
 
 static void CreateOptionsMenu(void) {
     /* u32 length; */
     u32 i;
-    u32 y[ARRAY_COUNT(sRomhackOptions)];
 
-    for (i = 0; i < ARRAY_COUNT(y); ++i) {
-        y[i] = GetMenuEntryYCoord(&sMenu->input, i);
+    CallPrepareTextbox_8008C54(sMenu->menuHeaderWindow.m.menuWinId);
+    sub_80073B8(sMenu->menuHeaderWindow.m.menuWinId);
+
+    PrintStringOnWindow(16, 0, sStringRomhackOptions, sMenu->menuHeaderWindow.m.menuWinId, 0);
+
+    for (i = 0; i < sMenu->menuHeaderWindow.m.input.currPageEntries; ++i) {
+        u32 optionIdx = sMenu->menuHeaderWindow.m.input.currPage * sMenu->menuHeaderWindow.m.input.entriesPerPage + i;
+        u32 y = GetMenuEntryYCoord(&sMenu->menuHeaderWindow.m.input, i);
+        PrintStringOnWindow(8, y, sRomhackOptions[optionIdx].name, sMenu->menuHeaderWindow.m.menuWinId, 0);
     }
-    sub_80073B8(sMenu->windowId);
-    PrintStringOnWindow(16, 0, sStringRomhackOptions, sMenu->windowId, 0);
-    for (i = 0; i < ARRAY_COUNT(y); ++i) {
-        PrintStringOnWindow(8, y[i], sRomhackOptions[i].name, sMenu->windowId, 0);
-    }
-    sub_80073E0(sMenu->windowId);
+    sub_80073E0(sMenu->menuHeaderWindow.m.menuWinId);
 }

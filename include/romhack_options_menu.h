@@ -7,11 +7,7 @@
 
 typedef struct RomhackDataOptionsMenu {
     RomhackData *data;
-    TouchScreenMenuInput touch;
-    MenuInputStruct input;
-    s32 windowId;
-    WindowTemplate *currWindowTemplate;
-    WindowTemplates windowTemplates;
+    MenuHeaderWindow menuHeaderWindow;
 } RomhackDataOptionsMenu;
 
 bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData);
