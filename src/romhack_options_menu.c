@@ -58,7 +58,8 @@ static const WindowTemplate sWindowTemplate = {
     .header = &sWindowHeader
 };
 
-static RomhackMultiplier *GetMultiplier(RomhackData *data, const RomhackOption *const option);
+static RomhackMultiplier *GetOptionMultiplier(RomhackData *data, const RomhackOption *const option);
+static bool8 *GetOptionOnOff(RomhackData *data, const RomhackOption *const option);
 static void UpdateHeightHeader(void);
 static void CreateOptionsMenu(void);
 
@@ -115,10 +116,10 @@ s32 HandleRomhackDataScreenInput(void) {
             PlayMenuSoundEffect(MENU_SFX_ACCEPT);
             return 3;
         case INPUT_L_BUTTON:
-            updated = UpdateMultiplier(GetMultiplier(sMenu->data, &sRomhackOptions[optionIdx]), MULTIPLIER_DECREASE);
+            updated = UpdateMultiplier(GetOptionMultiplier(sMenu->data, &sRomhackOptions[optionIdx]), MULTIPLIER_DECREASE);
             break;
         case INPUT_R_BUTTON: {
-            updated = UpdateMultiplier(GetMultiplier(sMenu->data, &sRomhackOptions[optionIdx]), MULTIPLIER_INCREASE);
+            updated = UpdateMultiplier(GetOptionMultiplier(sMenu->data, &sRomhackOptions[optionIdx]), MULTIPLIER_INCREASE);
             break;
         }
     }
@@ -149,8 +150,8 @@ static void CreateOptionsMenu(void) {
             }
             case ROMHACK_OPTION_MULTIPLIER: {
                 u8 buffer[256];
-                u32 value = GetMultiplier(sMenu->data, &sRomhackOptions[optionIdx])->value;
-                sprintfStatic(buffer, _("%s{MOVE_X_POSITION}%c{L_BUTTON}%03d%%{R_BUTTON}{RESET}"), sRomhackOptions[optionIdx].name, 140, value);
+                u32 value = GetOptionMultiplier(sMenu->data, &sRomhackOptions[optionIdx])->value;
+                sprintfStatic(buffer, _("%s{MOVE_X_POSITION}%c{L_BUTTON}%04d%%{R_BUTTON}{RESET}"), sRomhackOptions[optionIdx].name, 136, value);
                 PrintStringOnWindow(8, y, buffer, sMenu->menuHeaderWindow.m.menuWinId, 0);
                 break;
             }
@@ -186,8 +187,14 @@ static bool8 UpdateMultiplier(RomhackMultiplier *value, MultiplierUpdate update)
     }
 }
 
-static RomhackMultiplier *GetMultiplier(RomhackData *data, const RomhackOption *const option) {
+static RomhackMultiplier *GetOptionMultiplier(RomhackData *data, const RomhackOption *const option) {
     u32 offset = option->dataOffset;
     void *ptr = ((void *)data) + offset;
     return (RomhackMultiplier *)ptr;
+}
+
+static bool8 *GetOptionOnOff(RomhackData *data, const RomhackOption *const option) {
+    u32 offset = option->dataOffset;
+    void *ptr = ((void *)data) + offset;
+    return (bool8 *)ptr;
 }

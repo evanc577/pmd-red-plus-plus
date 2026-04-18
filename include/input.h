@@ -10,6 +10,10 @@ typedef struct Inputs
     /* 0x6 */ u16 shortPress;
     /* 0x8 */ u16 heldDpad;
     /* 0xC */ s32 repeatTimerDpad;
+    s32 repeatTimerLButton;
+    s32 repeatTimerRButton;
+    u16 heldLButton;
+    u16 heldRButton;
 } Inputs;
 
 // size: 0x8

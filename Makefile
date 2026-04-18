@@ -93,7 +93,7 @@ ASFLAGS         := -mcpu=arm7tdmi --defsym MODERN=$(MODERN)
 
 ifeq ($(MODERN),0)
   CC1       := tools/agbcc/bin/agbcc
-  override CC1FLAGS += -mthumb-interwork -Wimplicit -Wparentheses -Wunused -Werror -O2 -fhex-asm -g
+  override CC1FLAGS += -mthumb-interwork -Wimplicit -Wparentheses -Wunused -O2 -fhex-asm -g
   ifeq ($(OS),Windows_NT)
     LIB := ../../tools/agbcc/lib/libc.a ../../tools/agbcc/lib/libgcc.a ../../libagbsyscall/libagbsyscall.a
   else

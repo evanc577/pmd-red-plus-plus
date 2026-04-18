@@ -14,6 +14,9 @@ static EWRAM_DATA Inputs sCurrentInputs = {0}; // R=2025648 | B=020F5CB0
 static EWRAM_DATA Inputs sPrevInputs = {0}; // R=2025658 | B=020F5CA0
 static EWRAM_DATA InputTimers sInputTimers = {0}; // R=2025668 | B=020F5C8C
 
+static void UpdateRepeat(u16 buttonMask, u16 *heldButton, s32 *timer);
+static void UpdateShortPress(u16 buttonMask, s16 *timer);
+
 // arm9.bin::0200754C
 void InitInput(void)
 {
@@ -119,7 +122,11 @@ void ResetRepeatTimers(void)
 {
     gRealInputs.repeated = 0;
     sCurrentInputs.repeatTimerDpad = 0;
+    sCurrentInputs.repeatTimerLButton = 0;
+    sCurrentInputs.repeatTimerRButton = 0;
     sCurrentInputs.heldDpad = 0;
+    sCurrentInputs.heldLButton = 0;
+    sCurrentInputs.heldRButton = 0;
     sInputTimers.holdTimerB = 999;
     sInputTimers.holdTimerR = 999;
 }
@@ -161,55 +168,19 @@ void UpdateInput(void)
 
     ReadKeyInput(&sCurrentInputs);
 
+    // Combine newly and previously held inputs
     sCurrentInputs.pressed = (sPrevInputs.held ^ sCurrentInputs.held) & sCurrentInputs.held;
 
-    if (sCurrentInputs.held) {
-        if ((sCurrentInputs.heldDpad & DPAD_ANY) == (sCurrentInputs.held & DPAD_ANY)) {
-            if (sCurrentInputs.repeatTimerDpad < 50)
-                sCurrentInputs.repeatTimerDpad++;
-        }
-        else {
-            sCurrentInputs.heldDpad = sCurrentInputs.held & DPAD_ANY;
-            sCurrentInputs.repeatTimerDpad = 1;
-        }
-    }
-    else {
-        sCurrentInputs.repeatTimerDpad = 0;
-        sCurrentInputs.heldDpad = 0;
-    }
+    // Handle repeated inputs
+    sCurrentInputs.repeated = 0;
+    UpdateRepeat(DPAD_ANY, &sCurrentInputs.heldDpad, &sCurrentInputs.repeatTimerDpad);
+    UpdateRepeat(L_BUTTON, &sCurrentInputs.heldLButton, &sCurrentInputs.repeatTimerLButton);
+    UpdateRepeat(R_BUTTON, &sCurrentInputs.heldRButton, &sCurrentInputs.repeatTimerRButton);
 
-    if (sCurrentInputs.repeatTimerDpad == 1)
-        sCurrentInputs.repeated = (sCurrentInputs.heldDpad & DPAD_ANY) | sCurrentInputs.pressed;
-    else if (sCurrentInputs.repeatTimerDpad == 48) {
-        sCurrentInputs.repeatTimerDpad = 43;
-        sCurrentInputs.repeated = (sCurrentInputs.heldDpad & DPAD_ANY) | sCurrentInputs.pressed;
-    }
-    else
-        sCurrentInputs.repeated = 0;
-
+    // Handle short inputs
     sCurrentInputs.shortPress = 0;
-
-    if (sCurrentInputs.held & B_BUTTON) {
-        if (sInputTimers.holdTimerB < 100)
-            sInputTimers.holdTimerB++;
-    }
-    else if (1 < sInputTimers.holdTimerB && sInputTimers.holdTimerB < 12) {
-        sCurrentInputs.shortPress = B_BUTTON;
-        sInputTimers.holdTimerB = 0;
-    }
-    else
-        sInputTimers.holdTimerB = 0;
-
-    if (sCurrentInputs.held & R_BUTTON) {
-        if (sInputTimers.holdTimerR < 100)
-            sInputTimers.holdTimerR++;
-    }
-    else if (1 < sInputTimers.holdTimerR && sInputTimers.holdTimerR < 12) {
-        sCurrentInputs.shortPress |= R_BUTTON;
-        sInputTimers.holdTimerR = 0;
-    }
-    else
-        sInputTimers.holdTimerR = 0;
+    UpdateShortPress(B_BUTTON, &sInputTimers.holdTimerB);
+    UpdateShortPress(R_BUTTON, &sInputTimers.holdTimerR);
 
     sBufferedInputs.held |= sCurrentInputs.held;
     sBufferedInputs.pressed |= sCurrentInputs.pressed;
@@ -217,4 +188,44 @@ void UpdateInput(void)
     sBufferedInputs.shortPress |= sCurrentInputs.shortPress;
 
     sUnusedScrambledInputJunk[0] *= sCurrentInputs.held | JUNK_UPDATE;
+}
+
+static void UpdateRepeat(u16 buttonMask, u16 *heldButton, s32 *timer) {
+    if (sCurrentInputs.held) {
+        if ((*heldButton & buttonMask) == (sCurrentInputs.held & buttonMask)) {
+            // If the currently held input did not change, increment timer up to 50
+            if (*timer < 50) {
+                (*timer)++;
+            }
+        } else {
+            // If the held input changed, reset the timer
+            *heldButton = sCurrentInputs.held & buttonMask;
+            *timer = 1;
+        }
+    } else {
+        *timer = 0;
+        *heldButton = 0;
+    }
+
+    if (*timer == 1) {
+        // The first repeat fires immediately
+        sCurrentInputs.repeated |= (*heldButton & buttonMask) | sCurrentInputs.pressed;
+    } else if (*timer == 48) {
+        // Subsequent repeats fire faster
+        *timer = 43;
+        sCurrentInputs.repeated |= (*heldButton & buttonMask) | sCurrentInputs.pressed;
+    }
+}
+
+static void UpdateShortPress(u16 buttonMask, s16 *timer) {
+    if (sCurrentInputs.held & buttonMask) {
+        if (*timer < 100) {
+            (*timer)++;
+        }
+    } else if (1 < *timer && *timer < 12) {
+        sCurrentInputs.shortPress |= buttonMask;
+        *timer = 0;
+    } else {
+        *timer = 0;
+    }
 }
