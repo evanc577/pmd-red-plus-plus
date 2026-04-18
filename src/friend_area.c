@@ -7,6 +7,7 @@
 #include "friend_area.h"
 #include "items.h"
 #include "pokemon.h"
+#include "romhack_data.h"
 #include "strings.h"
 #include "dungeon_data.h"
 
@@ -102,7 +103,7 @@ u8 GetFriendAreaUnlockCondition(u8 index)
 
 s32 GetFriendAreaPrice(u8 index)
 {
-    return gFriendAreaSettings[index].price;
+    return gFriendAreaSettings[index].price * gRomhackData.friendAreaCostMult.value / 100;
 }
 
 void sub_8092558(u8 *buffer, u8 index)
@@ -116,7 +117,7 @@ void WriteFriendAreaName(u8 *buffer, u8 index, bool8 printPrice)
     u8 priceBuffer[20];
 
     if (printPrice) {
-        WriteHighDecimal(gFriendAreaSettings[index].price, priceBuffer, 1);
+        WriteHighDecimal(gFriendAreaSettings[index].price * gRomhackData.friendAreaCostMult.value / 100, priceBuffer, 1);
         sprintfStatic(buffer, _("%s{MOVE_X_POSITION}%c{COLOR GREEN_RAW}%s{RESET}"), gFriendAreaNames[index], 96, priceBuffer);
     }
     else
