@@ -1,7 +1,9 @@
 #include "romhack_options_menu.h"
 
+#include "code_800D090.h"
 #include "global.h"
 #include "input.h"
+#include "items.h"
 #include "memory.h"
 #include "menu_input.h"
 #include "music_util.h"
@@ -21,87 +23,7 @@ const RomhackOption sRomhackOptions[] = {
         .data = (void *)(&gRomhackData.friendAreaCostMult),
     },
     {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Friend area cost",
-        .type = ROMHACK_OPTION_MULTIPLIER,
-        .data = (void *)(&gRomhackData.friendAreaCostMult),
-    },
-    {
-        .name = "Gummi IQ eff",
+        .name = "Gummi IQ effect",
         .type = ROMHACK_OPTION_MULTIPLIER,
         .data = (void *)(&gRomhackData.gummiIqMult),
     },
@@ -200,7 +122,22 @@ static void CreateOptionsMenu(void) {
     for (i = 0; i < sMenu->menuHeaderWindow.m.input.currPageEntries; ++i) {
         u32 optionIdx = sMenu->menuHeaderWindow.m.input.currPage * sMenu->menuHeaderWindow.m.input.entriesPerPage + i;
         u32 y = GetMenuEntryYCoord(&sMenu->menuHeaderWindow.m.input, i);
-        PrintStringOnWindow(8, y, sRomhackOptions[optionIdx].name, sMenu->menuHeaderWindow.m.menuWinId, 0);
+        switch (sRomhackOptions[optionIdx].type) {
+            case ROMHACK_OPTION_TEXT_ONLY: {
+                PrintStringOnWindow(8, y, sRomhackOptions[optionIdx].name, sMenu->menuHeaderWindow.m.menuWinId, 0);
+                break;
+            }
+            case ROMHACK_OPTION_MULTIPLIER: {
+                u8 buffer[256];
+                u32 value = ((RomhackMultiplier *)sRomhackOptions[optionIdx].data)->value;
+                sprintfStatic(buffer, _("%s{MOVE_X_POSITION}%c{L_BUTTON}%03d%%{R_BUTTON}{RESET}"), sRomhackOptions[optionIdx].name, 140, value);
+                PrintStringOnWindow(8, y, buffer, sMenu->menuHeaderWindow.m.menuWinId, 0);
+                break;
+            }
+            case ROMHACK_OPTION_ON_OFF: {
+                break;
+            }
+        }
     }
     sub_80073E0(sMenu->menuHeaderWindow.m.menuWinId);
 }
