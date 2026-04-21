@@ -5,6 +5,8 @@
 #include "constants/iq_skill.h"
 #include "constants/status.h"
 #include "constants/tactic.h"
+#include "romhack_quick_move.h"
+#include "romhack_util.h"
 #include "structs/map.h"
 #include "structs/str_dungeon.h"
 #include "structs/str_text.h"
@@ -78,12 +80,12 @@ static bool8 sub_805E874(void);
 static bool8 sub_805EC2C(Entity *a0, s32 x, s32 y);
 static bool8 sub_805EC4C(Entity *a0, u8 a1);
 static bool8 sub_805EF60(Entity *a0, EntityInfo *a1);
-static void ShowMainMenu(bool8 fromBPress, bool8 a1);
+static void ShowMainMenu(bool8 fromBPress, bool8 playFanfareSE);
 static void PrintOnMainMenu(bool8 printAll);
 
 void DungeonHandlePlayerInput(void)
 {
-    struct UnkMenuBitsStruct r6;
+    struct UnkMenuBitsStruct r6 = {};
     bool8 triggers[5]; // Always FALSE, if one of these is TRUE - they can open various menus or cause an item throw. Used in Blue's touch screen.
     s32 frames;
     s32 var_38;
@@ -131,14 +133,14 @@ void DungeonHandlePlayerInput(void)
         sInRotateMode = FALSE;
         sInDiagonalMode = FALSE;
         if (gDungeon->unk5C0 >= 0) {
-            r6.a0_8 = 1;
-            r6.a0_16 = 0;
-            r6.a0_24 = 0;
+            r6.showMenu = 1;
+            r6.menuIdle = 0;
+            r6.playFanfareSE = 0;
         }
         else {
-            r6.a0_8 = 0;
-            r6.a0_16 = 0;
-            r6.a0_24 = 0;
+            r6.showMenu = 0;
+            r6.menuIdle = 0;
+            r6.playFanfareSE = 0;
         }
 
         frames = 0;
@@ -146,7 +148,7 @@ void DungeonHandlePlayerInput(void)
         sShowThreeArrows1 = FALSE;
         sShowThreeArrows2 = FALSE;
 
-        while (r6.a0_8 == 0) {
+        while (r6.showMenu == 0) {
             u32 dpadDiagonal, dpadSimple;
             bool32 highlightTiles, tryItemThrow;
             bool32 bPress, rPress, unkBool; // Always FALSE, might've been used in Blue.
@@ -182,6 +184,11 @@ void DungeonHandlePlayerInput(void)
             bPress = FALSE;
             rPress = FALSE;
 
+            if (gRealInputs.held & L_BUTTON) {
+                ShowRomhackQuickMoveScreen();
+                break;
+            }
+
             if (gRealInputs.pressed & A_BUTTON) {
                 if (gRealInputs.held & B_BUTTON) {
                     if (FixedPointToInt(leaderInfo->belly) != 0) {
@@ -197,48 +204,7 @@ void DungeonHandlePlayerInput(void)
                     break;
                 }
                 else if (gRealInputs.held & L_BUTTON) {
-                    bool32 canUseMove;
-                    s32 i, j;
-
-                    for (i = 0; i < MAX_MON_MOVES; i++) {
-                        if (MoveFlagExists(&leaderInfo->moves.moves[i]) && MoveFlagSet(&leaderInfo->moves.moves[i])) {
-                            break;
-                        }
-                    }
-                    if (i == MAX_MON_MOVES) {
-                        LogMessageByIdWithPopupCheckUser_Async(leader, gUnknown_80F8A28);
-                        break;
-                    }
-
-                    for (j = 0; j < MAX_MON_MOVES; j++) {
-                        if (MoveFlagExists(&leaderInfo->moves.moves[j])) {
-                            if (leaderInfo->moves.moves[j].PP != 0)
-                                break;
-                        }
-                    }
-                    if (j == MAX_MON_MOVES) {
-                        SetMonsterActionFields(&leaderInfo->action, ACTION_STRUGGLE);
-                        break;
-                    }
-
-                    canUseMove = FALSE;
-                    for (j = i; j < MAX_MON_MOVES; j++) {
-                        if (j != i && !(leaderInfo->moves.moves[j].moveFlags & MOVE_FLAG_SUBSEQUENT_IN_LINK_CHAIN)) {
-                            break;
-                        }
-                        if (leaderInfo->moves.moves[j].PP != 0) {
-                            canUseMove = TRUE;
-                            break;
-                        }
-                    }
-                    if (!canUseMove) {
-                        LogMessageByIdWithPopupCheckUser_Async(leader, gUnknown_80F8A4C);
-                    }
-                    else {
-                        SetMonsterActionFields(&leaderInfo->action, ACTION_USE_MOVE_PLAYER);
-                        leaderInfo->action.actionParameters[0].actionUseIndex = GetTeamMemberEntityIndex(leader);
-                        leaderInfo->action.actionParameters[1].actionUseIndex = i;
-                    }
+                    TryAttack(TRY_ATTACK_TYPE_SET_MOVE, leader);
                     break;
                 }
                 else {
@@ -250,42 +216,42 @@ void DungeonHandlePlayerInput(void)
             }
 
             if (gRealInputs.shortPress & B_BUTTON) {
-                r6.a0_8 = 1;
-                r6.a0_16 = 0;
-                r6.a0_24 = 0;
+                r6.showMenu = 1;
+                r6.menuIdle = 0;
+                r6.playFanfareSE = 0;
                 break;
             }
             else if (triggers[1]) { // Opens moves menu
                 gDungeon->unk5C0 = 0;
-                r6.a0_8 = 1;
-                r6.a0_16 = 0;
-                r6.a0_24 = 1;
+                r6.showMenu = 1;
+                r6.menuIdle = 0;
+                r6.playFanfareSE = 1;
                 break;
             }
             else if (triggers[2]) { // Opens item menu
                 gDungeon->unk5C0 = 1;
-                r6.a0_8 = 1;
-                r6.a0_16 = 0;
-                r6.a0_24 = 1;
+                r6.showMenu = 1;
+                r6.menuIdle = 0;
+                r6.playFanfareSE = 1;
                 break;
             }
             else if (triggers[3]) { // Opens pokemon menu
                 gDungeon->unk5C0 = 2;
-                r6.a0_8 = 1;
-                r6.a0_16 = 0;
-                r6.a0_24 = 1;
+                r6.showMenu = 1;
+                r6.menuIdle = 0;
+                r6.playFanfareSE = 1;
                 break;
             }
             else if (triggers[4]) { // Opens regular menu
-                r6.a0_8 = 1;
-                r6.a0_16 = 0;
-                r6.a0_24 = 1;
+                r6.showMenu = 1;
+                r6.menuIdle = 0;
+                r6.playFanfareSE = 1;
                 break;
             }
             else if (frames > 0x707) { // Opens simple menu when idling
-                r6.a0_8 = 1;
-                r6.a0_16 = 1;
-                r6.a0_24 = 0;
+                r6.showMenu = 1;
+                r6.menuIdle = 1;
+                r6.playFanfareSE = 0;
                 break;
             }
 
@@ -494,7 +460,7 @@ void DungeonHandlePlayerInput(void)
                 break;
             SetLeaderActionFields(ACTION_NOTHING);
         }
-        else if ((r6.a0_8) == 0) {
+        else if ((r6.showMenu) == 0) {
             gDungeon->unk644.unk29 = 0;
             if (leaderInfo->action.action != 0) {
                 if (!IsNotAttacking(leader, FALSE)) {
@@ -507,7 +473,7 @@ void DungeonHandlePlayerInput(void)
         else {
             DungeonRunFrameActions(0xF);
             ClearUnpaidFlagFromAllItems();
-            ShowMainMenu((r6.a0_16 == 0), r6.a0_24);
+            ShowMainMenu((r6.menuIdle == 0), r6.playFanfareSE);
             ResetRepeatTimers();
             ResetUnusedInputStruct();
             sInRotateMode = FALSE;
@@ -1101,7 +1067,7 @@ enum
     MAIN_MENU_GROUND,
 };
 
-static void ShowMainMenu(bool8 fromBPress, bool8 a1)
+static void ShowMainMenu(bool8 fromBPress, bool8 playFanfareSE)
 {
     Item *item;
     s32 r10;
@@ -1124,7 +1090,7 @@ static void ShowMainMenu(bool8 fromBPress, bool8 a1)
     gDungeon->unk17E = -1;
     #endif
 
-    if (a1) {
+    if (playFanfareSE) {
         PlayFanfareSE(0x137, 0x100);
     }
     else {
@@ -1173,9 +1139,9 @@ static void ShowMainMenu(bool8 fromBPress, bool8 a1)
             struct UnkMenuBitsStruct var_34;
 
             SetLeaderActionToNothing(TRUE);
-            var_34.a0_8 = 0;
-            var_34.a0_16 = 1;
-            var_34.a0_24 = 0;
+            var_34.showMenu = 0;
+            var_34.menuIdle = 1;
+            var_34.playFanfareSE = 0;
             var_34.a0_32 = 0;
             if (ShowDungeonItemsMenu(GetLeader(), &var_34)) {
                 r10 = -1;
@@ -1389,9 +1355,9 @@ static void ShowMainMenu(bool8 fromBPress, bool8 a1)
                     struct UnkMenuBitsStruct var_30;
 
                     SetLeaderActionToNothing(TRUE);
-                    var_30.a0_8 = 0;
-                    var_30.a0_16 = 1;
-                    var_30.a0_24 = 1;
+                    var_30.showMenu = 0;
+                    var_30.menuIdle = 1;
+                    var_30.playFanfareSE = 1;
                     var_30.a0_32 = 1;
                     if (ShowDungeonItemsMenu(GetLeader(), &var_30)) {
                         // This actually doesn't do anything, it's just there to make the code match as the compiler does a `lsl r0, r0, #0x10, mov r0, r4`
@@ -1492,10 +1458,10 @@ static void PrintOnMainMenu(bool8 printAll)
     ResetTouchScreenMenuInput(&gDungeonMenu.touchScreen);
     sub_80137B0(&gDungeonMenu, 0x38);
     if (printAll) {
-        sub_803EAF0(7, NULL);
+        sub_803EAF0(DUNGEON_WINDOW_TYPE_MAIN, NULL);
     }
     else {
-        sub_803EAF0(6, NULL);
+        sub_803EAF0(DUNGEON_WINDOW_TYPE_IDLE, NULL);
     }
 
     sub_80073B8(0);

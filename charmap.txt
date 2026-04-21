@@ -445,8 +445,8 @@ INVALID_SEQUENCE_976C = 97 6C
 @'ε' = 83 C3 @ News
 @'ζ' = 83 C4 @ Ke
 @'η' = 83 C5 @ White dash?
-@'θ' = 83 C6 @ X button
-@'ι' = 83 C7 @ Y button
+'θ' = 83 C6 @ X button
+'ι' = 83 C7 @ Y button
 'κ' = 83 C8 @ Kappa wasn't replaced :P
 
 POKE = 83 BF 83 C4 @ This is actually two characters which can render separately; may need to be split eventually.

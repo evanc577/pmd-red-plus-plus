@@ -143,3 +143,5 @@
 .include "src/ground_script.o"
 .include "src/ground_sprite.o"
 .include "src/ground_link.o"
+.include "src/romhack_quick_move.o"
+.include "src/romhack_util.o"

@@ -49,20 +49,20 @@ bool8 sub_805FD3C(struct UnkMenuBitsStruct *a0)
 {
     u16 action = GetLeaderActionId();
 
-    a0->a0_8 = 0;
-    a0->a0_16 = 0;
-    a0->a0_24 = 0;
+    a0->showMenu = 0;
+    a0->menuIdle = 0;
+    a0->playFanfareSE = 0;
     a0->a0_32 = 0;
     if (action == 0xA) {
-        a0->a0_8 = 1;
+        a0->showMenu = 1;
         a0->a0_32 = 1;
     }
     if (action == 0x3E) {
-        a0->a0_8 = 1;
-        a0->a0_16 = 0;
+        a0->showMenu = 1;
+        a0->menuIdle = 0;
         a0->a0_32 = 1;
     }
-    return a0->a0_8;
+    return a0->showMenu;
 }
 
 bool8 ShowDungeonItemsMenu(Entity * a0, struct UnkMenuBitsStruct *a1)
@@ -101,9 +101,9 @@ bool8 ShowDungeonItemsMenu(Entity * a0, struct UnkMenuBitsStruct *a1)
     sUnknownActionUnk4.itemPos.x = 0;
     sUnknownActionUnk4.itemPos.y = 0;
     if (a1 != NULL) {
-        var_2C = (a1->a0_8 != 0);
-        var_34 = (a1->a0_16 != 0);
-        var_30 = (a1->a0_24 != 0);
+        var_2C = (a1->showMenu != 0);
+        var_34 = (a1->menuIdle != 0);
+        var_30 = (a1->playFanfareSE != 0);
         var_28 = (a1->a0_32 != 0);
     }
 

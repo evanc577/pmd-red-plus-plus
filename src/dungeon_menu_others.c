@@ -65,7 +65,7 @@ enum {
     OTHERS_MISSION_OBJECTIVES,
     OTHERS_RECRUITMENT_SEARCH,
     OTHERS_HINTS,
-    OTHERS_COUNT
+    OTHERS_COUNT,
 };
 
 void ShowDungeonOthersMenu(void)

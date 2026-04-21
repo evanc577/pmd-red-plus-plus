@@ -420,6 +420,8 @@ SECTIONS {
         *libc.a:lseekr.o(.text);
         *libc.a:readr.o(.text);
         *libgcc.a:_udivsi3.o(.text);
+        src/romhack_quick_move.o(.text);
+        src/romhack_util.o(.text);
     }  > ROM =0
 
     .rodata :
@@ -904,7 +906,9 @@ SECTIONS {
         *libc.a:locale.o(.rodata);
         *libc.a:mprec.o(.rodata);
         *libc.a:syscalls.o(.rodata);
-		. = ALIGN(4);
+        src/romhack_quick_move.o(.rodata);
+        src/romhack_util.o(.rodata);
+	. = ALIGN(4);
     } > ROM =0
 
 	ewram_init :
