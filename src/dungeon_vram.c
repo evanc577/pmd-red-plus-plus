@@ -1,6 +1,7 @@
 #include "global.h"
 #include "globaldata.h"
 #include "dungeon_vram.h"
+#include "romhack_quick_move.h"
 #include "structs/str_dungeon.h"
 #include "bg_control.h"
 #include "bg_palette_buffer.h"
@@ -575,7 +576,7 @@ void sub_803EAF0(u32 kind, u8 *name)
                 UpdateBgTilemapForDungeonMap(TRUE);
             break;
         }
-        case 6: {
+        case DUNGEON_WINDOW_TYPE_IDLE: {
             if (gUnknown_203B40C != 0)
                 sub_8052210(0);
 
@@ -583,7 +584,7 @@ void sub_803EAF0(u32 kind, u8 *name)
             ShowWindows(&gUnknown_80F6310, TRUE, TRUE);
             break;
         }
-        case 7: {
+        case DUNGEON_WINDOW_TYPE_MAIN: {
             if (gUnknown_203B40C != 0)
                 sub_8052210(0);
 
@@ -629,6 +630,14 @@ void sub_803EAF0(u32 kind, u8 *name)
         }
         case 10: {
             PlayDungeonStartButtonSE();
+            break;
+        }
+        case DUNGEON_WINDOW_TYPE_QUICK_MOVE: {
+            if (gUnknown_203B40C != 0)
+                sub_8052210(0);
+
+            ResetUnusedInputStruct();
+            ShowWindows(&gQuickMoveWindow, TRUE, TRUE);
             break;
         }
         case 150: { // Dummy case put here to match, any value >= 150 works

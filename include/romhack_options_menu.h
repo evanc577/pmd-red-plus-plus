@@ -17,9 +17,9 @@ typedef enum RomhackOptionType {
 } RomhackOptionType;
 
 typedef struct RomhackOption {
-    const char *const name;
+    const u8 *const name;
     const RomhackOptionType type;
-    u32 dataOffset;
+    const u32 dataOffset;
 } RomhackOption;
 
 bool8 CreateRomhackOptionsDisplayScreen(RomhackData *romhackData);

@@ -29,5 +29,3 @@ ALIGNED(4) static const u8 sOthers[] = _("Others");
 ALIGNED(4) static const u8 sChangeSettingsPrompt[] = _("Change settings?");
 ALIGNED(4) static const u8 sGameOptions[] = _("Game Options");
 ALIGNED(4) static const u8 sHints[] = _("Hints");
-
-ALIGNED(4) static const u8 sRomhackOptions[] = _("Romhack Options");

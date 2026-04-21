@@ -145,3 +145,6 @@
 .include "src/ground_link.o"
 .include "src/romhack_data.o"
 .include "src/romhack_options_menu.o"
+.include "src/romhack_quick_move.o"
+.include "src/romhack_strings.o"
+.include "src/romhack_util.o"

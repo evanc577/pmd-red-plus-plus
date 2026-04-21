@@ -5,6 +5,9 @@
 #include "dungeon_vram.h"
 #include "dungeon_tilemap.h"
 #include "dungeon_action.h"
+#include "romhack_data.h"
+#include "romhack_options_menu.h"
+#include "romhack_strings.h"
 #include "status_strings.h"
 #include "dungeon_info.h"
 #include "dungeon_exit.h"
@@ -27,6 +30,7 @@
 #include "input.h"
 #include "menu_input.h"
 #include "post_office_guide2.h"
+#include "structs/save.h"
 #include "text_1.h"
 #include "text_2.h"
 #include "text_3.h"
@@ -39,6 +43,7 @@ static void ShowMissionObjectivesMenu(void);
 static void ShowHintsMenu(void);
 static bool8 ShowDungeonOptions(void);
 static bool8 ShowOthersOptions(void);
+static bool8 ShowRomhackOptions(void);
 static void TrySetNewGameOptions(bool8 bPressed);
 static void AskToResetToDefault(void);
 static void PrintGameOptions(void);
@@ -57,15 +62,17 @@ static void ShowChosenHintWindow(s32 hintId);
 EWRAM_DATA static s32 sOthersCursorId = 0;
 UNUSED EWRAM_DATA static u8 sUnused[4] = {0};
 EWRAM_DATA static GameOptions sChangedGameOptions = {0};
+EWRAM_DATA static RomhackData sChangedRomhackData = {0};
 
 enum {
     OTHERS_GAME_OPTIONS,
+    OTHERS_ROMHACK_OPTIONS,
     OTHERS_QUICKSAVE_GIVEUP,
     OTHERS_MESSAGE_LOG,
     OTHERS_MISSION_OBJECTIVES,
     OTHERS_RECRUITMENT_SEARCH,
     OTHERS_HINTS,
-    OTHERS_COUNT
+    OTHERS_COUNT,
 };
 
 void ShowDungeonOthersMenu(void)
@@ -117,6 +124,9 @@ void ShowDungeonOthersMenu(void)
         sOthersCursorId = gDungeonMenu.menuIndex;
         if (sOthersCursorId == OTHERS_GAME_OPTIONS) {
             ShowGameOptionsMenu();
+        }
+        if (sOthersCursorId == OTHERS_ROMHACK_OPTIONS) {
+            ShowRomhackOptions();
         }
         if (sOthersCursorId == OTHERS_QUICKSAVE_GIVEUP) {
             ShowQuickSaveGiveUpMenu();
@@ -336,6 +346,34 @@ static bool8 ShowOthersOptions(void)
     return bPress;
 }
 
+static bool8 ShowRomhackOptions(void)
+{
+    bool8 bPress = FALSE;
+    sChangedRomhackData = gRomhackData;
+    CreateRomhackOptionsDisplayScreen(&sChangedRomhackData);
+    while (TRUE) {
+        DungeonRunFrameActions(0x24);
+        switch (HandleRomhackDataScreenInput()) {
+            case 2:
+                bPress = TRUE;
+                // fallthrough
+            case 3:
+                DestroyRomhackOptionsDisplayScreen();
+
+                // Check to see if the options changed?
+                if (!RomhackDataNotChanged(&sChangedRomhackData)) {
+                    if (DisplayDungeonYesNoMessage_Async(0, gUnknown_80FEBF8, TRUE) == 1) {
+                        gRomhackData = sChangedRomhackData;
+                    }
+                }
+                return bPress;
+            case 0:
+            case 1:
+                break;
+        }
+    }
+}
+
 static void TrySetNewGameOptions(bool8 bPressed)
 {
     bool8 optionsChanged = FALSE;
@@ -491,6 +529,7 @@ static void PrintOthersMenuOptions(void)
     currOptionId = 0;
     PrintFormattedStringOnWindow(16, 0, gUnknown_80FE8F8, 0, '\0');
     PrintFormattedStringOnWindow(8, GetMenuEntryYCoord(&gDungeonMenu, currOptionId++), gUnknown_80FE9CC, 0, '\0');
+    PrintFormattedStringOnWindow(8, GetMenuEntryYCoord(&gDungeonMenu, currOptionId++), gStringRomhackOptions, 0, '\0');
     PrintFormattedStringOnWindow(8, GetMenuEntryYCoord(&gDungeonMenu, currOptionId++), gUnknown_80FE9E8, 0, '\0');
     PrintFormattedStringOnWindow(8, GetMenuEntryYCoord(&gDungeonMenu, currOptionId++), gUnknown_80FE9F8, 0, '\0');
     PrintFormattedStringOnWindow(8, GetMenuEntryYCoord(&gDungeonMenu, currOptionId++), gUnknown_80FEA10, 0, '\0');

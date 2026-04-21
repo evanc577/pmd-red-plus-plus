@@ -6,6 +6,22 @@
 #include "structs/str_position.h"
 #include "structs/dungeon_entity.h"
 
+typedef enum DungeonWindowType {
+    DUNGEON_WINDOW_TYPE_UNK_0,
+    DUNGEON_WINDOW_TYPE_UNK_1,
+    DUNGEON_WINDOW_TYPE_UNK_2,
+    DUNGEON_WINDOW_TYPE_UNK_3,
+    DUNGEON_WINDOW_TYPE_UNK_4,
+    DUNGEON_WINDOW_TYPE_UNK_5,
+    DUNGEON_WINDOW_TYPE_IDLE,
+    DUNGEON_WINDOW_TYPE_MAIN,
+    DUNGEON_WINDOW_TYPE_UNK_8,
+    DUNGEON_WINDOW_TYPE_UNK_9,
+    DUNGEON_WINDOW_TYPE_UNK_10,
+    DUNGEON_WINDOW_TYPE_QUICK_MOVE,
+    DUNGEON_WINDOW_TYPE_UNK_150 = 150,
+} DungeonWindowType;
+
 void sub_803E250(void);
 void DungeonRunFrameActions(u32 a0);
 void sub_803E668(u32 unused);

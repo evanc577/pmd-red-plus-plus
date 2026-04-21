@@ -168,7 +168,7 @@ void UpdateInput(void)
 
     ReadKeyInput(&sCurrentInputs);
 
-    // Combine newly and previously held inputs
+    // Pressed inputs are have changed from unheld to held on this frame
     sCurrentInputs.pressed = (sPrevInputs.held ^ sCurrentInputs.held) & sCurrentInputs.held;
 
     // Handle repeated inputs

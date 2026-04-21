@@ -10,6 +10,7 @@
 #include "options_menu1.h"
 #include "options_menu2.h"
 #include "romhack_options_menu.h"
+#include "romhack_strings.h"
 #include "string_format.h"
 #include "text_1.h"
 
@@ -207,7 +208,7 @@ static void CreateOthersMenu(void)
     sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_GAMEOPTIONS;
 
     loopMax++;
-    sOptionsMenu1State->menuItems[loopMax].text = sRomhackOptions;
+    sOptionsMenu1State->menuItems[loopMax].text = gStringRomhackOptions;
     sOptionsMenu1State->menuItems[loopMax].menuAction = MENU_OPTION_ROMHACK_OPTIONS;
 
     loopMax++;

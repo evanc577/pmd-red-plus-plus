@@ -4,10 +4,11 @@
 #include "structs/dungeon_entity.h"
 
 struct UnkMenuBitsStruct {
-    u8 a0_8;
-    u8 a0_16;
-    u8 a0_24;
+    u8 showMenu;
+    u8 menuIdle;
+    u8 playFanfareSE;
     u8 a0_32;
+    u8 showQuickMoveMenu;
 };
 
 void DungeonHandlePlayerInput(void);

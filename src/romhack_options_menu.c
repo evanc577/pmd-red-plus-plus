@@ -7,6 +7,7 @@
 #include "memory.h"
 #include "menu_input.h"
 #include "music_util.h"
+#include "romhack_strings.h"
 #include "structs/save.h"
 #include "text_1.h"
 #include "text_2.h"
@@ -15,7 +16,6 @@
 
 static EWRAM_INIT RomhackDataOptionsMenu *sMenu = {NULL};
 
-ALIGNED(4) static const u8 sStringRomhackOptions[] = "Romhack Options";
 ALIGNED(4) static const u8 sStringDebug1[] = "DEBUG 1";
 
 const RomhackOption sRomhackOptions[] = {
@@ -59,7 +59,7 @@ static const WindowTemplate sWindowTemplate = {
 };
 
 static RomhackMultiplier *GetOptionMultiplier(RomhackData *data, const RomhackOption *const option);
-static bool8 *GetOptionOnOff(RomhackData *data, const RomhackOption *const option);
+/* static bool8 *GetOptionOnOff(RomhackData *data, const RomhackOption *const option); */
 static void UpdateHeightHeader(void);
 static void CreateOptionsMenu(void);
 
@@ -110,7 +110,7 @@ s32 HandleRomhackDataScreenInput(void) {
     bool8 updated = FALSE;
     switch (GetMenuInput()) {
         case INPUT_B_BUTTON:
-        PlayMenuSoundEffect(MENU_SFX_BACK);
+            PlayMenuSoundEffect(MENU_SFX_BACK);
             return 2;
         case INPUT_A_BUTTON:
             PlayMenuSoundEffect(MENU_SFX_ACCEPT);
@@ -138,7 +138,7 @@ static void CreateOptionsMenu(void) {
     CallPrepareTextbox_8008C54(sMenu->menuHeaderWindow.m.menuWinId);
     sub_80073B8(sMenu->menuHeaderWindow.m.menuWinId);
 
-    PrintStringOnWindow(16, 0, sStringRomhackOptions, sMenu->menuHeaderWindow.m.menuWinId, 0);
+    PrintStringOnWindow(16, 0, gStringRomhackOptions, sMenu->menuHeaderWindow.m.menuWinId, 0);
 
     for (i = 0; i < sMenu->menuHeaderWindow.m.input.currPageEntries; ++i) {
         u32 optionIdx = sMenu->menuHeaderWindow.m.input.currPage * sMenu->menuHeaderWindow.m.input.entriesPerPage + i;
@@ -193,8 +193,8 @@ static RomhackMultiplier *GetOptionMultiplier(RomhackData *data, const RomhackOp
     return (RomhackMultiplier *)ptr;
 }
 
-static bool8 *GetOptionOnOff(RomhackData *data, const RomhackOption *const option) {
-    u32 offset = option->dataOffset;
-    void *ptr = ((void *)data) + offset;
-    return (bool8 *)ptr;
-}
+/* static bool8 *GetOptionOnOff(RomhackData *data, const RomhackOption *const option) { */
+/*     u32 offset = option->dataOffset; */
+/*     void *ptr = ((void *)data) + offset; */
+/*     return (bool8 *)ptr; */
+/* } */
