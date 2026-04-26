@@ -4,6 +4,7 @@
 #include "constants/dungeon_exit.h"
 #include "constants/fixed_rooms.h"
 #include "constants/type.h"
+#include "romhack_data.h"
 #include "structs/str_pokemon.h"
 #include "dungeon_main.h"
 #include "dungeon_misc.h"
@@ -89,14 +90,18 @@ bool8 TryRecruitMonster(Entity *attacker, Entity *target)
 
     if (!IsMonsterRecruitable(targetInfo->id))
         return FALSE;
-    if (abs((attacker->pos).x - (target->pos).x) >= 2 || abs((attacker->pos).y - (target->pos).y) >= 2)
-        return FALSE;
+    if (!gRomhackData.recruitAtDistance) {
+        if (abs((attacker->pos).x - (target->pos).x) >= 2 || abs((attacker->pos).y - (target->pos).y) >= 2)
+            return FALSE;
+    }
     if (targetInfo->joinedAt.id == DUNGEON_JOIN_LOCATION_CLIENT_POKEMON)
         return FALSE;
     if (targetInfo->monsterBehavior == 1)
         return FALSE;
-    if (!CanSeeTarget(target,attacker))
-        return FALSE;
+    if (!gRomhackData.recruitAtDistance) {
+        if (!CanSeeTarget(target,attacker))
+            return FALSE;
+    }
 
     sub_806F910();
     rand = DungeonRandInt(1000);
@@ -105,7 +110,7 @@ bool8 TryRecruitMonster(Entity *attacker, Entity *target)
         return FALSE;
 
     if (HasHeldItem(attacker, ITEM_FRIEND_BOW))
-        recruitRate += gFriendBowRecruitRateUpValue;
+        recruitRate += gFriendBowRecruitRateUpValue * gRomhackData.friendBowEffect.value / 100;
 
     recruitRate += gRecruitRateByLevel[attackerInfo->level];
     if (rand >= recruitRate)

@@ -24,6 +24,10 @@ typedef struct RomhackDataV2 {
     bool8 guaranteedLegendaryRecruit;
     RomhackMultiplier hungerRate;
     RomhackMultiplier expMult;
+    bool8 recruitAtDistance;
+    bool8 recruitByAllyKo;
+    bool8 recruitByStatusKo;
+    RomhackMultiplier friendBowEffect;
 } RomhackDataV2;
 
 typedef RomhackDataV2 RomhackData;

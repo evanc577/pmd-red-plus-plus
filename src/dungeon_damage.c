@@ -2,6 +2,7 @@
 #include "globaldata.h"
 #include "dungeon_damage.h"
 #include "constants/ability.h"
+#include "romhack_data.h"
 #include "structs/str_dungeon.h"
 #include "dungeon_logic.h"
 #include "dungeon_move.h"
@@ -706,8 +707,11 @@ static bool8 HandleDealingDamageInternal_Async(Entity *attacker, Entity *target,
         }
     }
 
-    if (EntityIsValid(attacker) && GetEntityType(attacker) == ENTITY_MONSTER && !GetEntInfo(attacker)->isTeamLeader)
-        r10 = FALSE;
+    if (EntityIsValid(attacker) && GetEntityType(attacker) == ENTITY_MONSTER) {
+        if (!gRomhackData.recruitByAllyKo && !GetEntInfo(attacker)->isTeamLeader) {
+            r10 = FALSE;
+        }
+    }
 
     if (r10) {
         struct unkStruct_8069D4C sp;

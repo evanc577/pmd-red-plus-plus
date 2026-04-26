@@ -40,9 +40,29 @@ const RomhackOption sRomhackOptions[] = {
         .dataOffset = offsetof(RomhackData, gummiIqMult),
     },
     {
-        .name = "No excl. Pokemon",
+        .name = "Exp. mult.",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .dataOffset = offsetof(RomhackData, expMult),
+    },
+    {
+        .name = "No version excl. Pokemon",
         .type = ROMHACK_OPTION_ON_OFF,
         .dataOffset = offsetof(RomhackData, noExclusivePokemon),
+    },
+    {
+        .name = "Recruit at a distance",
+        .type = ROMHACK_OPTION_ON_OFF,
+        .dataOffset = offsetof(RomhackData, recruitAtDistance),
+    },
+    {
+        .name = "Recruit by ally",
+        .type = ROMHACK_OPTION_ON_OFF,
+        .dataOffset = offsetof(RomhackData, recruitByAllyKo),
+    },
+    {
+        .name = "Friend bow effect",
+        .type = ROMHACK_OPTION_MULTIPLIER,
+        .dataOffset = offsetof(RomhackData, friendBowEffect),
     },
 };
 
@@ -193,6 +213,12 @@ static void CreateOptionsMenu(void) {
 }
 
 static bool8 UpdateMultiplier(RomhackMultiplier *value, MultiplierUpdate update) {
+    if (value->value < 0 || value->value > 10000) {
+        PlayMenuSoundEffect(MENU_SFX_TOGGLE);
+        value->value = 100;
+        return TRUE;
+    }
+
     switch (update) {
         case MULTIPLIER_INCREASE:
             if (value->value >= 10000) {

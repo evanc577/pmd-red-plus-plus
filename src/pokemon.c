@@ -5,6 +5,7 @@
 #include "constants/monster.h"
 #include "constants/tactic.h"
 #include "code_800D090.h"
+#include "romhack_data.h"
 #include "status_strings.h"
 #include "cpu.h"
 #include "decompress_at.h"
@@ -862,7 +863,8 @@ s16 GetInternalNo(s16 index)
 s32 CalculateEXPGain(s16 index, s32 level)
 {
     s32 expYield = sMonsterParameters[index].expYield;
-    return expYield + (expYield * (level - 1)) / 10;
+    expYield += (expYield * (level - 1)) / 10;
+    return expYield * gRomhackData.expMult.value / 100;
 }
 
 s16 GetPokemonEvolveConditions(s16 index, unkEvolve *r1)
