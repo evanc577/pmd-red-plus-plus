@@ -12,13 +12,22 @@ void InitializeRomhackData() {
     gRomhackData.version = 0;
     gRomhackData.friendAreaCostMult = DefaultRomhackMultiplier();
     gRomhackData.gummiIqMult = DefaultRomhackMultiplier();
+    gRomhackData.itemCostMult = DefaultRomhackMultiplier();
+    gRomhackData.noExclusivePokemon = FALSE;
+    gRomhackData.guaranteedLegendaryRecruit = FALSE;
+    gRomhackData.hungerRate = DefaultRomhackMultiplier();
+    gRomhackData.expMult = DefaultRomhackMultiplier();
 }
 
 bool8 RomhackDataNotChanged(RomhackData *newData) {
-    if (gRomhackData.gummiIqMult.value != newData->gummiIqMult.value) {
-        return FALSE;
-    } else if (gRomhackData.friendAreaCostMult.value != newData->friendAreaCostMult.value) {
-        return FALSE;
+    // Poor man's memcmp
+    u32 i;
+    for (i = 0; i < sizeof(RomhackData); ++i) {
+        u8 b1 = *(((u8 *)&gRomhackData) + i);
+        u8 b2 = *(((u8 *)newData) + i);
+        if (b1 != b2) {
+            return FALSE;
+        }
     }
     return TRUE;
 }
@@ -33,10 +42,12 @@ static RomhackMultiplier DefaultRomhackMultiplier() {
 bool8 LoadRomhackSaveData(struct UnkStruct_sub_8011DAC *save) {
     u32 version;
     s32 i;
+
+    InitializeRomhackData();
+
     // Read gameInternalName, if it is not "ROM_________HACK", assume we need to create a new save.
     for (i = 0; i < sizeof(save->gameInternalName); ++i) {
         if (gRomhackName[i] != save->gameInternalName[i]) {
-            InitializeRomhackData();
             return TRUE;
         }
     }
@@ -50,20 +61,13 @@ bool8 LoadRomhackSaveData(struct UnkStruct_sub_8011DAC *save) {
         case 1:
             MemoryCopy8(&gRomhackData, save->savedRomhackData, sizeof(RomhackDataV1));
             break;
+        case 2:
+            MemoryCopy8(&gRomhackData, save->savedRomhackData, sizeof(RomhackDataV2));
+            break;
         default:
             return FALSE;
     }
 
-    // Update fields between versions
-    switch (version) {
-        case 0:
-            gRomhackData.friendAreaCostMult = DefaultRomhackMultiplier();
-            gRomhackData.gummiIqMult = DefaultRomhackMultiplier();
-            // fallthrough
-        case 1:
-        default:
-            break;
-    }
-    gRomhackData.version = 1;
+    gRomhackData.version = 2;
     return TRUE;
 }

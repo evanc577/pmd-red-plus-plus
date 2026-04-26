@@ -2,6 +2,7 @@
 #include "globaldata.h"
 #include "exclusive_pokemon.h"
 #include "dungeon_data.h"
+#include "romhack_data.h"
 
 EWRAM_INIT ExclusivePokemonData *gExclusiveMonPtr = { NULL };
 
@@ -124,6 +125,10 @@ bool8 IsExclusivePokemonUnlocked(s32 pokeID)
 {
     s32 i;
     s32 pokeID_s32 = (s16) pokeID;
+
+    if (gRomhackData.noExclusivePokemon) {
+        return TRUE;
+    }
 
     for (i = 0; i < NUM_EXCLUSIVE_POKEMON; i++) {
         if (gExclusivePokemon[i].poke_id == pokeID_s32)

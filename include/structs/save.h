@@ -14,8 +14,19 @@ typedef struct RomhackDataV1 {
     RomhackMultiplier friendAreaCostMult;
     RomhackMultiplier gummiIqMult;
 } RomhackDataV1;
-typedef RomhackDataV1 RomhackData;
 
+typedef struct RomhackDataV2 {
+    u32 version;
+    RomhackMultiplier friendAreaCostMult;
+    RomhackMultiplier gummiIqMult;
+    RomhackMultiplier itemCostMult;
+    bool8 noExclusivePokemon;
+    bool8 guaranteedLegendaryRecruit;
+    RomhackMultiplier hungerRate;
+    RomhackMultiplier expMult;
+} RomhackDataV2;
+
+typedef RomhackDataV2 RomhackData;
 // size: 0x57D4
 struct UnkStruct_sub_8011DAC
 {

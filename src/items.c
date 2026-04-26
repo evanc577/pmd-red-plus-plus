@@ -1,5 +1,6 @@
 #include "global.h"
 #include "globaldata.h"
+#include "romhack_data.h"
 #include "status_strings.h"
 #include "constants/colors.h"
 #include "constants/type.h"
@@ -248,9 +249,9 @@ s32 GetStackBuyValue(Item *param_1)
     if (param_1->id == ITEM_POKE)
         return GetMoneyValue(param_1);
     else if (IsThrownItem(param_1->id))
-        return gItemParametersData[param_1->id].buyPrice * param_1->quantity;
+        return gItemParametersData[param_1->id].buyPrice * param_1->quantity * gRomhackData.itemCostMult.value / 100;
     else
-        return gItemParametersData[param_1->id].buyPrice;
+        return gItemParametersData[param_1->id].buyPrice * gRomhackData.itemCostMult.value / 100;
 }
 
 // arm9.bin::02060CE0
@@ -270,9 +271,9 @@ s32 GetActualBuyPrice(Item *param_1)
     if (!IsShoppableItem(param_1->id))
         return 0;
     else if (IsThrownItem(param_1->id))
-        return gItemParametersData[param_1->id].buyPrice * param_1->quantity;
+        return gItemParametersData[param_1->id].buyPrice * param_1->quantity * gRomhackData.itemCostMult.value / 100;
     else
-        return gItemParametersData[param_1->id].buyPrice;
+        return gItemParametersData[param_1->id].buyPrice * gRomhackData.itemCostMult.value / 100;
 }
 
 // arm9.bin::02060C18
